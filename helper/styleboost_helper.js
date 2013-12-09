@@ -31,7 +31,7 @@ module.exports = function styleboostHelpers(hawkejs) {
 		options.childrenOpen = '<ul class="children">';
 		options.childrenClose = '</ul>';
 
-		options.sectionOpen = '<li class="section">';
+		options.sectionOpen = '<li class="section" data-toggle="open">';
 		options.sectionClose = '</li>';
 
 		options.sectionContent = {'class': 'section-toggle'};
