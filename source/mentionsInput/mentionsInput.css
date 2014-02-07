@@ -1,0 +1,79 @@
+.mentions-wrapper textarea {
+	width: 100%;
+	display: block;
+	padding: 9px;
+	border-radius:3px;
+	background: #fff;
+	position: relative;
+	outline: 0;
+	overflow: auto;
+	height: 100px;
+	width: 500px;
+	resize: none;
+}
+
+.mentions-wrapper .mentions-autocomplete-list {
+	display: none;
+	background: #fff;
+	border: 1px solid #b2b2b2;
+	position: absolute;
+	z-index: 10000;
+
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+	   -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+	        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+}
+
+.mentions-wrapper .mentions-autocomplete-list ul {
+		margin: 0;
+		padding: 0;
+}
+
+.mentions-wrapper .mentions-autocomplete-list li {
+	background-color: #fff;
+	padding: 0 5px;
+	margin: 0;
+	width: auto;
+	border-bottom: 1px solid #eee;
+	height: 26px;
+	line-height: 26px;
+	overflow: hidden;
+	cursor: pointer;
+	list-style: none;
+	white-space: nowrap;
+}
+
+.mentions-wrapper .mentions-autocomplete-list li em {
+	font-weight: bold;
+	font-style: none;
+}
+
+.mentions-wrapper .mentions-autocomplete-list li:hover,
+.mentions-wrapper .mentions-autocomplete-list li.active {
+	background-color: #f2f2f2;
+}
+
+.mentions-wrapper .mentions-autocomplete-list li b {
+	background: #ffff99;
+	font-weight: normal;
+}
+
+.mentions-wrapper .mentions {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.mentions-wrapper .mentions > div {
+	color: transparent;
+	white-space: pre-wrap;
+	width: 100%;
+}
+
+.mentions-wrapper .mentions > strong {
+	font-weight:normal;
+	background: #d8dfea;
+}
+
+.selected {
+	background-color: #eee !important;
+}
