@@ -1,0 +1,52 @@
+// LessPHP specific fix for Bootstrap 3.0
+.pull-right {
+	.dropdown-menu() {
+		right: 0;
+		left: auto;
+	}
+}
+
+// Add old mixins that were removed from bootstrap 3
+// The reason why they were removed is because browsers have dropped their
+// prefixed versions, so we can leave those out too
+
+// Border Radius
+.border-radius(@radius) {
+	border-radius: @radius;
+}
+
+// Single Corner Border Radius
+.border-top-left-radius(@radius) {
+	border-top-left-radius: @radius;
+}
+.border-top-right-radius(@radius) {
+	border-top-right-radius: @radius;
+}
+.border-bottom-right-radius(@radius) {
+	border-bottom-right-radius: @radius;
+}
+.border-bottom-left-radius(@radius) {
+	border-bottom-left-radius: @radius;
+}
+
+// Background clipping
+// Heads up: FF 3.6 and under need "padding" instead of "padding-box"
+.background-clip(@clip) {
+	background-clip: @clip;
+}
+
+// Drop shadows
+.box-shadow(@shadow) {
+	box-shadow: @shadow;
+}
+
+// Re-add removed variables
+@white:                  #ffffff;
+@black:                  #000000;
+@baseLineHeight:         @line-height-base;
+@baseFontSize:           @font-size-base;
+@inputBorderRadius:      @input-border-radius;
+@inputBackground:        @input-bg;
+@inputBorder:            @input-border;
+@dropdownLinkColorHover:       @dropdown-link-hover-color;
+@dropdownLinkBackgroundHover:  @dropdown-link-hover-bg;
