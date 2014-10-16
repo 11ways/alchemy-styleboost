@@ -1,0 +1,73 @@
+@cblue: #35c1a3;
+@cblue-darker: #3aac91;
+@cwhite: #FFFFFF;
+
+.medium-toolbar-arrow-under:after {
+    top: 40px;
+    border-color: @cblue-darker transparent transparent transparent;
+}
+.medium-toolbar-arrow-over:before {
+    top: -8px;
+    border-color: transparent transparent @cblue-darker transparent;
+}
+.medium-editor-toolbar {
+    background-color: @cblue;
+    li {
+        padding: 0;
+        button {
+            min-width: 60px;
+            height: 40px;
+            border: none;
+            border-right: 1px solid @cwhite;
+			border-bottom: 3px solid @cblue-darker;
+            background-color: transparent;
+            color: @cwhite;
+            -webkit-transition: background-color 0.2s ease-in, color 0.2s ease-in;
+            transition: background-color 0.2s ease-in, color 0.2s ease-in;
+        }
+        button:hover {
+            background-color: @cblue-darker;
+            color: @cwhite;
+        }
+        .medium-editor-button-active {
+            background-color: @cblue-darker;
+            color: @cwhite;
+        }
+        .medium-editor-button-last {
+            border-right: none;
+        }
+    }
+}
+.medium-editor-toolbar-form-anchor {
+    .medium-editor-toolbar-anchor-input {
+        height: 40px;
+        background: @cblue;
+        color: @cwhite;
+    }
+    .medium-editor-toolbar-anchor-input::-webkit-input-placeholder {
+        color: @cwhite;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .medium-editor-toolbar-anchor-input:-moz-placeholder {
+        color: @cwhite;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .medium-editor-toolbar-anchor-input::-moz-placeholder {
+        color: @cwhite;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .medium-editor-toolbar-anchor-input:-ms-input-placeholder {
+        color: @cwhite;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    a {
+        color: @cwhite;
+    }
+}
+.medium-editor-toolbar-anchor-preview {
+    background: @cblue;
+    color: @cwhite;
+}
+.medium-editor-placeholder:after {
+    color: @cwhite;
+}
