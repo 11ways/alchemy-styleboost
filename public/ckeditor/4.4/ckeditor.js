@@ -22523,4 +22523,5 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 		"de": 1,
 		"ru": 1
 	};
+	CKEDITOR.disableAutoInline = true;
 }());
