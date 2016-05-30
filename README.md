@@ -1,14 +1,11 @@
-# Styleboost Plugin
-* Author:  Jelle De Loecker (jelle@codedor.be)
-* http://www.codedor.be
-* license: MIT
-* version: 0.0.1
+# Alchemy Styleboost
 
 The Styleboost plugin provides your Alchemy application and plugins access
-to the popular front-end framework "for faster and easier web development".
+to several popular front-end frameworks.
 
 # Usage
-You can use Bootstrap in your own Less files by importing it like you normally
+
+You can use the stylesheet files by importing it like you normally
 would, for example:
 
 ```less
