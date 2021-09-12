@@ -1,7 +1,7 @@
 {
 	"name": "alchemy-styleboost",
 	"description": "Style assets for the Alchemy MVC",
-	"version": "0.4.3",
+	"version": "0.4.4",
 	"author": "Jelle De Loecker <jelle@develry.be>",
 	"keywords": [
 		"alchemy",
@@ -9,11 +9,11 @@
 		"plugin"
 	],
 	"repository": {
-		"type": "git",
-		"url": "https://github.com/skerit/alchemy-styleboost.git"
+		"type" : "git",
+		"url"  : "https://github.com/skerit/alchemy-styleboost.git"
 	},
 	"license": "MIT",
 	"engines": {
-		"node": ">=6.6.0"
+		"node" : ">=6.6.0"
 	}
 }

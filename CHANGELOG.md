@@ -1,3 +1,8 @@
+## 0.4.4 (2021-09-12)
+
+* Add roboto font
+* Add ace editor
+
 ## 0.4.3 (2020-07-21)
 
 * Add ckeditor 4.11 & 4.13
