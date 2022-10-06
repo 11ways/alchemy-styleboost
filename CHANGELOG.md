@@ -1,5 +1,7 @@
 ## 0.5.0 (WIP)
 
+* Make "hidden" attribute's CSS styles important
+
 ## 0.4.4 (2021-09-12)
 
 * Add roboto font
