@@ -1,3 +1,7 @@
+## 0.4.6 (WIP)
+
+* Add CKEditor 5
+
 ## 0.4.5 (2022-11-02)
 
 * Make "hidden" attribute's CSS styles important
