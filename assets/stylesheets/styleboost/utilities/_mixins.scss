@@ -1,0 +1,70 @@
+@use "styleboost/utilities/functions" as *;
+
+// Generate CSS properties
+@mixin map-to-properties($map, $prefix) {
+	@each $name, $value in $map {
+		#{$prefix + $name}: #{$value};
+	}
+}
+
+// Generate CSS properties, but make sure it's the base value
+@mixin map-to-base-properties($map, $prefix) {
+	@each $name, $value in $map {
+		$value: get-base-color($value);
+		#{$prefix + $name}: #{$value};
+	}
+}
+
+// Generate use-theme classes
+@mixin use-theme-classes($map) {
+	// Generate theme classes
+	@each $name, $value in $map {
+		.use-#{$name}-theme {
+			--color-theme: var(--color-#{$name});
+			--color-theme-fill: var(--color-#{$name}-fill);
+			--color-theme-fill-text: var(--color-#{$name}-fill-text);
+			--color-theme-bg: var(--color-#{$name}-bg);
+			--color-theme-bg-text: var(--color-#{$name}-bg-text);
+			--color-theme-accent: var(--color-#{$name}-accent);
+			--color-theme-accent-text: var(--color-#{$name}-accent-text);
+			--color-theme-emphasis: var(--color-#{$name}-emphasis);
+			--color-theme-emphasis-text: var(--color-#{$name}-emphasis-text);
+
+			--color-theme-100: var(--color-#{$name}-100);
+			--color-theme-200: var(--color-#{$name}-200);
+			--color-theme-300: var(--color-#{$name}-300);
+			--color-theme-400: var(--color-#{$name}-400);
+			--color-theme-500: var(--color-#{$name}-500);
+			--color-theme-600: var(--color-#{$name}-600);
+			--color-theme-700: var(--color-#{$name}-700);
+			--color-theme-800: var(--color-#{$name}-800);
+			--color-theme-900: var(--color-#{$name}-900);
+
+			// Set the emphasis alpha values
+			--color-theme-emphasis-alpha-10: var(--color-#{$name}-emphasis-alpha-10);
+			--color-theme-emphasis-alpha-20: var(--color-#{$name}-emphasis-alpha-20);
+			--color-theme-emphasis-alpha-30: var(--color-#{$name}-emphasis-alpha-30);
+			--color-theme-emphasis-alpha-40: var(--color-#{$name}-emphasis-alpha-40);
+			--color-theme-emphasis-alpha-50: var(--color-#{$name}-emphasis-alpha-50);
+			--color-theme-emphasis-alpha-60: var(--color-#{$name}-emphasis-alpha-60);
+			--color-theme-emphasis-alpha-70: var(--color-#{$name}-emphasis-alpha-70);
+			--color-theme-emphasis-alpha-80: var(--color-#{$name}-emphasis-alpha-80);
+			--color-theme-emphasis-alpha-90: var(--color-#{$name}-emphasis-alpha-90);
+			--color-theme-emphasis-alpha-95: var(--color-#{$name}-emphasis-alpha-95);
+			--color-theme-emphasis-alpha-99: var(--color-#{$name}-emphasis-alpha-99);
+
+			// And the accent alpha values
+			--color-theme-accent-alpha-10: var(--color-#{$name}-accent-alpha-10);
+			--color-theme-accent-alpha-20: var(--color-#{$name}-accent-alpha-20);
+			--color-theme-accent-alpha-30: var(--color-#{$name}-accent-alpha-30);
+			--color-theme-accent-alpha-40: var(--color-#{$name}-accent-alpha-40);
+			--color-theme-accent-alpha-50: var(--color-#{$name}-accent-alpha-50);
+			--color-theme-accent-alpha-60: var(--color-#{$name}-accent-alpha-60);
+			--color-theme-accent-alpha-70: var(--color-#{$name}-accent-alpha-70);
+			--color-theme-accent-alpha-80: var(--color-#{$name}-accent-alpha-80);
+			--color-theme-accent-alpha-90: var(--color-#{$name}-accent-alpha-90);
+			--color-theme-accent-alpha-95: var(--color-#{$name}-accent-alpha-95);
+			--color-theme-accent-alpha-99: var(--color-#{$name}-accent-alpha-99);
+		}
+	}
+}

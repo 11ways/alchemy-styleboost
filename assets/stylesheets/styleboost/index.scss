@@ -1,0 +1,22 @@
+@forward "styleboost/utilities/functions";
+@forward "styleboost/utilities/mixins";
+@forward "styleboost/variables";
+@forward "styleboost/utilities/contrast";
+@forward "styleboost/utilities/color";
+@forward "normalize/variables";
+@forward "body";
+@forward "button";
+@forward "table";
+
+@use "styleboost/utilities/functions";
+@use "styleboost/utilities/mixins";
+@use "styleboost/variables";
+@use "styleboost/utilities/contrast";
+@use "styleboost/utilities/color";
+
+@use "normalize/normalize";
+@use "body";
+@use "button";
+@use "table";
+
+@include normalize.normalize();

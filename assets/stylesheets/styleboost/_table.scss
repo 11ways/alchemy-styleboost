@@ -1,0 +1,66 @@
+@use "variables" as *;
+
+:root {
+	--table-color: var(--color-theme-bg-text);
+	--table-cell-padding: 0.5rem;
+	--table-accent-bg: transparent;
+	// --table-bg: #{$table-bg};
+	// --table-border-color: #{$table-border-color};
+	// --table-accent-bg: #{$table-accent-bg};
+	// --table-striped-color: #{$table-striped-color};
+	// --table-striped-bg: #{$table-striped-bg};
+	// --table-active-color: #{$table-active-color};
+	// --table-active-bg: #{$table-active-bg};
+	// --table-hover-color: #{$table-hover-color};
+	// --table-hover-bg: #{$table-hover-bg};
+}
+
+.table {
+	--table-color-text-type: initial;
+	--table-color-bg-type: initial;
+	--table-color-text-state: initial;
+	--table-color-bg-state: initial;
+
+	width: 100%;
+	color: var(--table-color-text, var(--color-theme-bg-text));
+	background-color: var(--table-color-bg, var(--color-theme-bg));
+	border-color: var(--table-color-border, var(--color-theme-accent));
+
+	tbody {
+		vertical-align: inherit;
+	}
+
+	thead {
+		vertical-align: bottom;
+	}
+
+	th,
+	td {
+		text-align: inherit;
+		padding: var(--table-cell-padding, 0.5rem);
+		color: var(--table-color-text-state, var(--table-color-text-type, var(--table-color-text, var(--color-theme-bg-text))));
+		border-bottom: 1px solid var(--table-color-border, var(--color-theme-accent));
+
+		// This does the striping
+		box-shadow: inset 0 0 0 9999px var(--table-color-bg-state, var(--table-color-bg-type, var(--table-accent-bg)));
+	}
+
+	&-striped {
+		tbody > tr:nth-of-type(odd) > * {
+			--table-color-text-type: var(--table-color-striped-text, var(--color-theme-accent-text));
+			--table-color-bg-type: var(--table-color-striped-bg, var(--color-theme-accent-alpha-20));
+		}
+	}
+
+	&-hover {
+		tbody > tr:hover > * {
+			--table-color-text-state: var(--table-color-hover-text, var(--color-theme-accent-text));
+			--table-color-bg-state: var(--table-color-hover-bg, var(--color-theme-accent-alpha-40));
+		}
+	}
+
+	tbody > tr.selected > * {
+		--table-color-text-state: var(--table-color-active-text, var(--color-theme-accent-text));
+		--table-color-bg-state: var(--table-color-active-bg, var(--color-theme-accent-alpha-60));
+	}
+}

@@ -1,0 +1,385 @@
+@use "sass:map";
+@use "sass:meta";
+@use "contrast";
+
+// All generated color ranges will be placed in here
+$all-color-ranges: ();
+
+@function tint-color($color, $weight) {
+	@return mix(white, $color, $weight);
+}
+
+// Shade a color: mix a color with black
+@function shade-color($color, $weight) {
+	@return mix(black, $color, $weight);
+}
+
+// Ensure the wanted variant is in the map.
+// If it is not, create it using the given function
+@function _ensure-variant($map, $color-name, $color-definition, $variant, $function, $arg) {
+
+	$target-name: $color-name + "-" + $variant;
+	$result: null;
+
+	// If the map already has the variant, do nothing
+	@if map.has-key($map, $target-name) {
+		$result: map.get($map, $target-name);
+	} @else {
+
+		$color-base: null;
+
+		// If the $color-value is a map, try to get the variant from it
+		// If it does not exist, get the "base" color and use that to generate it.
+		@if type-of($color-definition) == map {
+
+			// If the variant exists in the map, just use that as-is
+			@if map.has-key($color-definition, $variant) {
+				$result: map.get($color-definition, $variant);
+			} @else {
+				$color-base: map.get($color-definition, "base");
+			}
+		} @else {
+			$color-base: $color-definition;
+		}
+
+		// If result is still null, try to use the function
+		@if $result == null {
+			@if type-of($function) == string {
+				$function: meta.get-function($function);
+			}
+
+			$result: meta.call($function, $color-base, $arg);
+		}
+	}
+
+	// Store this color in the all-color-ranges map
+	$all-color-ranges: map.set($all-color-ranges, $target-name, $result);
+
+	@return map.set($map, $target-name, $result);
+}
+
+// Ensure the given tint is in the map
+@function _ensure-tint($map, $color-name, $color-definition, $variant, $percentage) {
+	@return _ensure-variant($map, $color-name, $color-definition, $variant, "tint-color", $percentage);
+}
+
+// Ensure the given shade is in the map
+@function _ensure-shade($map, $color-name, $color-definition, $variant, $percentage) {
+	@return _ensure-variant($map, $color-name, $color-definition, $variant, "shade-color", $percentage);
+}
+
+// Ensure the given alpha value is in the map
+@function _ensure-alpha($map, $color-name, $color-definition, $variant, $decimal) {
+	@return _ensure-variant($map, $color-name, $color-definition, $variant, "rgba", $decimal);
+}
+
+// Ensure the given value/definition is in the map.
+// If the definition is a map, use the "base" value from it
+@function _ensure-value($map, $key, $definition) {
+
+	@if map.has-key($map, $key) {
+		@return $map;
+	}
+
+	@if type-of($definition) == map {
+		$definition: get-base-color($definition);
+	}
+
+	@return map.set($map, $key, $definition);
+}
+
+// Create a color definition map
+@function _create-definition-map($input) {
+
+	$result: null;
+
+	// If the input is already a map, use that!
+	@if type-of($input) == map {
+		$result: $input;
+	} @else {
+		$result: ("base": $input);
+	}
+
+	$base_name: get-base-color-name($result);
+	$base_color: get-base-color($result);
+
+	$result: map.set($result, "base", $base_color);
+	$result: map.set($result, "base_name", $base_name);
+
+	@return $result;
+}
+
+// Function that takes in a map & a color value, then returns that map
+// with the color value replaced with a new value
+@function generate-color-range($map, $color, $color-definition) {
+	$map: _ensure-tint($map, $color, $color-definition, "100", 80%);
+	$map: _ensure-tint($map, $color, $color-definition, "200", 60%);
+	$map: _ensure-tint($map, $color, $color-definition, "300", 40%);
+	$map: _ensure-tint($map, $color, $color-definition, "400", 20%);
+
+	$map: _ensure-value($map, "#{$color}-500", $color-definition);
+
+	$map: _ensure-shade($map, $color, $color-definition, "600", 20%);
+	$map: _ensure-shade($map, $color, $color-definition, "700", 40%);
+	$map: _ensure-shade($map, $color, $color-definition, "800", 60%);
+	$map: _ensure-shade($map, $color, $color-definition, "900", 80%);
+
+	@return $map;
+}
+
+// Generate alpha values for a color
+@function generate-alpha-values($map, $color, $color-definition) {
+
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-10", 0.1);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-20", 0.2);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-30", 0.3);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-40", 0.4);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-50", 0.5);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-60", 0.6);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-70", 0.7);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-80", 0.8);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-90", 0.9);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-95", 0.95);
+	$map: _ensure-alpha($map, $color, $color-definition, "alpha-99", 0.99);
+
+	@return $map;
+}
+
+// Get the given key from the map or the default value
+@function get-or-default($map, $key, $default) {
+	@return if(map.has-key($map, $key), map.get($map, $key), $default);
+}
+
+// Get the base color name (our name, not the actual color name)
+@function get-base-color-name($input) {
+
+	$base: map.get($input, "base");
+	$base_name: map.get($input, "base_name");
+
+	@if type-of($base) == string {
+		@return $base;
+	}
+
+	@if type-of($base_name) == string {
+		@return $base_name;
+	}
+
+	@return null;
+}
+
+// Get the base color.
+// If the given value is a color, it is the base color.
+@function get-base-color($input) {
+	@if type-of($input) == color {
+		@return $input;
+	}
+
+	// If the input is a map, get the "base" value from it
+	@if type-of($input) == map {
+		@return map.get($input, "base");
+	}
+
+	// If the input is a string, try to parse it as a color
+	@return parse-color($input);
+}
+
+// Get the value out of a map if it is a string
+@function get-from-map-if-string($map, $key) {
+
+	$type: type-of($key);
+
+	@if $type != string {
+
+		@if $type == map {
+			$target: $key;
+
+			@each $k, $v in $target {
+				$target: map.set($target, $k, get-from-map-if-string($map, $v));
+			}
+
+			@return $target;
+		}
+
+		@return $key;
+	}
+
+	@return map.get($map, $key);
+}
+
+// Generate a text color that has enough contrast to be used on the given color
+// Prefer lighter colors, but if the contrast ratio is too low, go darker
+@function generate-light-text($color) {
+
+	// Generate the preferred lighter version
+	$light: tint-color($color, 80%);
+	$light_ratio: contrast.ratio($light, $color);
+
+	@if $light_ratio >= 4.5 {
+		@return $light;
+	}
+
+	$lightest: tint-color($color, 90%);
+	$lightest_ratio: contrast.ratio($lightest, $color);
+
+	@if $lightest_ratio >= 4.5 {
+		@return $lightest;
+	}
+
+	// If the ratio was going down, let's see if we can just try white
+	@if $lightest_ratio > $light_ratio {
+		$temp: #fff;
+
+		@if contrast.ratio($color, $temp) >= 4.5 {
+			@return $temp;
+		}
+	}
+
+	// If we got this far, we might have to choose a darker version.
+	// To prevent it from being simply turned into black, start
+	$dark: shade-color($color, 20%);
+
+	@return contrast.stretch($color, $dark);
+}
+
+@function get-color-variant-or-default($color, $variant, $default) {
+	$key: #{$color + "-" + $variant};
+	@return if(map.has-key($all-color-ranges, $key), map.get($all-color-ranges, $key), $default);
+}
+
+// Create light-theme variants of the given color
+@function generate-light-theme-values($map, $color, $color-definition) {
+
+	// Make sure the color definition is a map
+	$color-definition: _create-definition-map($color-definition);
+
+	// Get the "base" color. This is the color used to generate all the others.
+	// Most of the time it is probably the same as the fill color.
+	$base: get-base-color($color-definition);
+
+	// Get the base color name
+	$base_name: get-base-color-name($color-definition);
+
+	// Fill is the main, vibrant color version
+	$fill: get-or-default($color-definition, "fill", $base);
+
+	// In light mode, the background should be much lighter
+	$bg: tint-color($base, 80%);
+
+	// In light mode, the accent/border should be a bit darker
+	$accent: tint-color($base, 60%);
+
+	// Emphasis color (like for hovers)
+	$emphasis: shade-color($base, 20%);
+
+	// The main text version should be darker
+	$text: shade-color($base, 40%);
+
+	// Generate the text variants
+	$fill-text: generate-light-text($fill);
+	$bg-text: contrast.stretch($bg, $text);
+	$accent-text: contrast.stretch($accent, $text);
+	$emphasis-text: generate-light-text($emphasis);
+
+	// Plain color value, like `--color-primary`
+	$map: map.set($map, #{$color + ""}, $base);
+
+	// The same color value, but make it clear it's for filling
+	$map: map.set($map, #{$color + "-fill"}, $fill);
+
+	// Now the text-color that can be used on this fill
+	$map: map.set($map, #{$color + "-fill-text"}, $fill-text);
+
+	// The background colors
+	$map: map.set($map, #{$color + "-bg"}, $bg);
+
+	// The text color that can be used on this background
+	$map: map.set($map, #{$color + "-bg-text"}, $bg-text);
+
+	// The accent colors
+	$map: map.set($map, #{$color + "-accent"}, $accent);
+
+	// The text color that can be used on this accent
+	$map: map.set($map, #{$color + "-accent-text"}, $accent-text);
+
+	// The emphasis colors
+	$map: map.set($map, #{$color + "-emphasis"}, $emphasis);
+
+	// The text color that can be used on this accent
+	$map: map.set($map, #{$color + "-emphasis-text"}, $emphasis-text);
+
+	// Generate accent alpha values
+	$map: generate-alpha-values($map, $color + "-accent", $accent);
+
+	// Generate emphasis alpha values
+	$map: generate-alpha-values($map, $color + "-emphasis", $emphasis);
+
+	// Generate the full color range too
+	$map: generate-color-range($map, $color, $base);
+
+	@return $map;
+}
+
+// Create dark-theme variants of the given color
+@function generate-dark-theme-values($map, $color, $color-definition) {
+
+	$value: get-base-color($color-definition);
+
+	// Fill is the main, vibrant color version
+	$fill: $value;
+
+	// In light mode, the background should be much lighter
+	$bg: shade-color($value, 80%);
+
+	// In light mode, the accent/border should be a bit darker
+	$accent: shade-color($value, 40%);
+
+	// Emphasis color (like for hovers)
+	$emphasis: tint-color($value, 20%);
+
+	// The main text version should be darker
+	$text: tint-color($value, 40%);
+
+	// Generate the text variants
+	$fill-text: contrast.stretch($fill, $bg);
+	$bg-text: contrast.stretch($bg, $text);
+	$accent-text: contrast.stretch($accent, $text);
+	$emphasis-text: contrast.stretch($emphasis, $accent);
+
+	// Plain color value, like `--color-primary`
+	$map: map.set($map, #{$color + ""}, $value);
+
+	// The same color value, but make it clear it's for filling
+	$map: map.set($map, #{$color + "-fill"}, $fill);
+
+	// Now the text-color that can be used on this fill
+	$map: map.set($map, #{$color + "-fill-text"}, $fill-text);
+
+	// The background colors
+	$map: map.set($map, #{$color + "-bg"}, $bg);
+
+	// The text color that can be used on this background
+	$map: map.set($map, #{$color + "-bg-text"}, $bg-text);
+
+	// The accent colors
+	$map: map.set($map, #{$color + "-accent"}, $accent);
+
+	// The text color that can be used on this accent
+	$map: map.set($map, #{$color + "-accent-text"}, $accent-text);
+
+	// The emphasis colors
+	$map: map.set($map, #{$color + "-emphasis"}, $emphasis);
+
+	// The text color that can be used on this accent
+	$map: map.set($map, #{$color + "-emphasis-text"}, $emphasis-text);
+
+	// Generate accent alpha values
+	$map: generate-alpha-values($map, $color + "-accent", $accent);
+
+	// Generate emphasis alpha values
+	$map: generate-alpha-values($map, $color + "-emphasis", $emphasis);
+
+	// Generate the full color range too
+	$map: generate-color-range($map, $color, $value);
+
+	@return $map;
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- This puts in all the required styles, scripts, ... -->
+		<% this.foundation({protoblast: true}) %>
+		<% style('styleboost/showcase') %>
+	</head>
+	<body class="use-main-theme">
+		<main>
+			<h1>Get started with Styleboost</h1>
+
+			<p>
+				Discover Styleboost, the custom SCSS framework for Alchemy MVC.
+				<label class="enable-dark-mode-label">
+					<input type="checkbox" class="enable-dark-mode">
+					<span>Dark mode</span>
+				</label>
+			</p>
+
+			<div class="color-showcase">
+				{% each color_map as color_name, values %}
+					<div class="color-group">
+						{% each values as entry %}
+							<div class="color-entry">
+								<div class="color-value" style="background-color: var(--color-{% entry.name %})"></div>
+								<div class="color-info">
+									<span class="color-name">
+										{{ entry.name }}
+									</span>
+									<span class="color-hex">
+										{{ entry.value }}
+									</span>
+								</div>
+							</div>
+						{% /each %}
+					</div>
+				{% /each %}
+			</div>
+
+			{% macro themeShowcase %}
+				{% each theme_names as theme_name %}
+					<div class="theme-group use-{% theme_name %}-theme">
+						<span
+							class="theme-name"
+							style="color: var(--color-theme);"
+						>{{ theme_name }}</span>
+						<div class="theme-examples">
+
+							<div class="theme-fill">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-{{ theme_name }}-fill</code>
+									<code>--color-{{ theme_name }}-fill-text</code>
+								</div>
+							</div>
+
+							<div class="theme-bg">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-{{ theme_name }}-bg</code>
+									<code>--color-{{ theme_name }}-bg-text</code>
+								</div>
+							</div>
+
+							<div class="theme-accent">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-{{ theme_name }}-accent</code>
+									<code>--color-{{ theme_name }}-accent-text</code>
+								</div>
+							</div>
+
+							<div class="theme-emphasis">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-{{ theme_name }}-emphasis</code>
+									<code>--color-{{ theme_name }}-emphasis-text</code>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% /each %}
+			{% /macro %}
+
+			<div class="theme-showcase-dark use-dark-mode">
+				{% run themeShowcase theme_names=theme_names %}
+				{% run themeShowcase theme_names=special_theme_names %}
+			</div>
+
+			<div class="theme-showcase-light">
+				{% run themeShowcase theme_names=theme_names %}
+				{% run themeShowcase theme_names=special_theme_names %}
+			</div>
+
+			{% macro tableContents %}
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>First</th>
+						<th>Last</th>
+						<th>Handle</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>1</th>
+						<td>Mark</td>
+						<td>Otto</td>
+						<td>@mdo</td>
+					</tr>
+					<tr>
+						<th>2</th>
+						<td>Jacob</td>
+						<td>Thornton</td>
+						<td>@fat</td>
+					</tr>
+					<tr>
+						<th>3</th>
+						<td colspan="2">Larry the Bird</td>
+						<td>@twitter</td>
+					</tr>
+				</tbody>
+			{% /macro %}
+
+			{% macro tableShowcase %}
+				{% each theme_names as theme_name %}
+					<div class="table-group use-{% theme_name %}-theme">
+						<span
+							class="theme-name"
+							style="color: var(--color-theme);"
+						>{{ theme_name }}</span>
+
+						<table class="table">
+							{% run tableContents %}
+						</table>
+
+						<table class="table table-striped">
+							{% run tableContents %}
+						</table>
+
+						<table class="table table-hover">
+							{% run tableContents %}
+						</table>
+					</div>
+				{% /each %}
+			{% /macro %}
+
+			<div class="table-showcase use-dark-mode">
+				{% run tableShowcase theme_names=theme_names %}
+				{% run tableShowcase theme_names=special_theme_names %}
+			</div>
+
+			<div class="table-showcase use-light-mode">
+				{% run tableShowcase theme_names=theme_names %}
+				{% run tableShowcase theme_names=special_theme_names %}
+			</div>
+
+		</main>
+
+		<!-- This is an internal element you should not worry about -->
+		<he-bottom></he-bottom>
+	</body>
+</html>

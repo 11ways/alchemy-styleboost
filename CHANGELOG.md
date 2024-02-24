@@ -1,3 +1,8 @@
+## 0.5.0 (WIP)
+
+* Upgrade to Alchemy v1.4.0
+* Add the `styleboost` SCSS framework
+
 ## 0.4.6 (2022-12-23)
 
 * Add CKEditor 5

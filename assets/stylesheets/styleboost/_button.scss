@@ -1,0 +1,30 @@
+.default-button {
+	font-size: var(--al-button-font-size, 1em);
+	font-weight: var(--al-button-font-weight, 400);
+	background-color: var(--al-button-color-bg, var(--color-theme-fill));
+	color: var(--al-button-color-text, var(--color-theme-fill-text));
+	cursor: pointer;
+	user-select: none;
+
+	padding: 0.5em 1em;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: bottom;
+	transition: 0.1s;
+	overflow: hidden;
+	line-height: 1.5;
+
+	al-icon,
+	.icon {
+		line-height: 1 !important;
+	}
+
+	&:hover {
+		background-color: var(--al-button-hover-color-bg, var(--color-theme-emphasis));
+		color: var(--al-button-hover-color-text, var(--color-theme-emphasis-text));
+	}
+}
+
+.button {
+	@extend .default-button;
+}

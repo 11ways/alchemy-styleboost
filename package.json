@@ -1,7 +1,7 @@
 {
 	"name": "alchemy-styleboost",
 	"description": "Style assets for the Alchemy MVC",
-	"version": "0.4.6",
+	"version": "0.5.0-alpha.1",
 	"author": "Jelle De Loecker <jelle@elevenways.be>",
 	"keywords": [
 		"alchemy",

@@ -1,0 +1,183 @@
+////
+/// @group contrast
+///
+/// Functions to help with contrast as defined by
+/// [WCAG21](https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio)
+////
+
+@use "sass:math";
+
+@function _threshold($threshold) {
+	@if ($threshold == 'AA' or $threshold == 'AAALG') {
+		@return 4.5;
+	} @else if ($threshold == 'AALG') {
+		@return 3;
+	} @else if ($threshold == 'AAA') {
+		@return 7;
+	} @else {
+		@return $threshold;
+	}
+}
+
+@function _srgb($channel) {
+	$x: math.div($channel, 255);
+	@if $x <= 0.04045 {
+		@return math.div($x, 12.92);
+	} @else {
+		$c: math.div($x + 0.055, 1.055);
+		@return math.pow($c, 2.4);
+	}
+}
+
+@function alpha-blend($fg, $bg: white) {
+	$a1: alpha($bg);
+	$a2: alpha($fg);
+
+	@if ($a1 == 0) {
+		@if ($a2 == 0) {
+			@return $fg;
+		}
+	}
+
+	$a: $a2 + (1 - $a2) * $a1;
+	$r: math.div($a2 * red($fg) + (1 - $a2) * $a1 * red($bg), $a);
+	$g: math.div($a2 * green($fg) + (1 - $a2) * $a1 * green($bg), $a);
+	$b: math.div($a2 * blue($fg) + (1 - $a2) * $a1 * blue($bg), $a);
+
+	@return rgba($r, $g, $b, $a);
+}
+
+@function luma($color) {
+	$r: _srgb(red($color));
+	$g: _srgb(green($color));
+	$b: _srgb(blue($color));
+	@return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+@function _contrast($fg, $bg) {
+	$lbg: luma($bg);
+	$lfg: luma(alpha-blend($fg, $bg));
+	@return math.div(max($lbg, $lfg) + 0.05, min($lbg, $lfg) + 0.05);
+}
+
+/// Calculate the minimum possible contrast between two colors.
+///
+/// Note that the "minimum" part of this is only relevant if `$bg` is
+/// transparent. In that case, a backdrop color is chosen so that the resulting
+/// contrast is minimal.
+///
+/// @param {color} $fg foreground color
+/// @param {color} $bg background color
+/// @return {number} between 1 and 21
+@function contrast-min($fg, $bg) {
+	// optimize for the common case
+	@if alpha($bg) == 1 {
+		@return _contrast($fg, $bg);
+	} @else {
+		$bg-black: alpha-blend($bg, black);
+		$bg-white: alpha-blend($bg, white);
+		$lfg: luma($fg);
+
+		@if luma($bg-white) < $lfg {
+			@return _contrast($fg, $bg-white);
+		} @else if luma($bg-black) > $lfg {
+			@return _contrast($fg, $bg-black);
+		} @else {
+			@return 1;
+		}
+	}
+}
+
+/// Calculate the contrast between two colors.
+///
+/// This function is different from `contrast-min` by not caring about the
+/// order of inputs. This is achieved by calculating the average of both
+/// possible results of `contrast-min`.
+///
+/// @param {color} $color1
+/// @param {color} $color2
+/// @return {number} between 1 and 21
+/// @see contrast-min
+@function contrast($color1, $color2) {
+	// NOTE: optimized for the common case
+	@if alpha($color1) + alpha($color2) == 2 {
+		@return _contrast($color1, $color2);
+	} @else {
+		$c1: contrast-min($color1, $color2);
+		$c2: contrast-min($color2, $color1);
+		@return ($c1 + $c2) * 0.5;
+	}
+}
+
+@function ratio($color1, $color2) {
+	@return contrast($color1, $color2);
+}
+
+/// Pick the higher contrast option for a given base color.
+///
+/// @param {color} $base the base color to compare to
+/// @param {color} $color1 [$contrast-dark-default] first option
+/// @param {color} $color2 [$contrast-light-default] second option
+/// @return {color} either `$color1` or `$color2`
+@function color(
+	$base,
+	$color1: $contrast-dark-default,
+	$color2: $contrast-light-default
+) {
+	@if contrast($color1, $base) >= contrast($color2, $base) {
+		@return $color1;
+	} @else {
+		@return $color2;
+	}
+}
+
+/// Mix color with black or white to increase contrast for a given base color.
+///
+/// @param {color} $base
+/// @param {color} $color
+/// @param {number} $threshold [4.5]
+///    (can also be 'AA', 'AALG', 'AAA', or 'AAALG')
+/// @return {color} The modified color
+@function stretch($base, $color, $threshold: 4.5) {
+	$threshold: _threshold($threshold);
+	$lower: $color;
+	$upper: if(luma($base) < 0.18, white, black);
+
+	@if contrast($base, $lower) >= $threshold {
+		@return $lower;
+	}
+	@if contrast($base, $upper) <= $threshold {
+		@return $upper;
+	}
+
+	// NOTE: This is not a usual binary search. It is possible that the contrast
+	// first decreases for a while when going from $lower to $upper.  However, we
+	// checked that it starts below $contrast, so the algorithm still works.
+	@for $i from 0 to 10 {
+		$tmp: mix($lower, $upper);
+
+		@if contrast($base, $tmp) < $threshold {
+			$lower: $tmp;
+		} @else {
+			$upper: $tmp;
+		}
+	}
+
+	@return $upper;
+}
+
+/// Warn if the contrast is below a threshold.
+///
+/// @param {color} $base
+/// @param {color} $color
+/// @param {number} $threshold [4.5]
+///    (can also be 'AA', 'AALG', 'AAA', or 'AAALG')
+/// @return {color} unchanged $color
+@function check($base, $color, $threshold: 4.5) {
+	$threshold: _threshold($threshold);
+	$contrast: contrast($base, $color);
+	@if $contrast < $threshold {
+		@warn 'contrast #{$contrast} between #{$base} and #{$color} too low!';
+	}
+	@return $color;
+}
