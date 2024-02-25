@@ -1,4 +1,4 @@
-## 0.5.0 (WIP)
+## 0.5.0-alpha.1 (2024-02-25)
 
 * Upgrade to Alchemy v1.4.0
 * Add the `styleboost` SCSS framework
