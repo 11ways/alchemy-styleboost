@@ -27,6 +27,13 @@ $color_ranges: ();
 $shade_ranges: ();
 $all_ranges: ();
 
+// The default mode
+$default_mode: null;
+$default_theme: null;
+
+// The minimum contrast raito
+$min_contrast_ratio: 4.5;
+
 // Create a color definition object
 // This is a map with the color name, the color value,
 // and eventually the generated ranges.
@@ -239,6 +246,9 @@ $all_ranges: ();
 	// meaning we could try to get the wanted value by color name & suffix!
 	$suffix: map.get($info, "suffix");
 
+	// See if we got a prefixed value
+	$found_suffixed_result: null;
+
 	// If the suffix is a string, try to get the value by color name & suffix
 	@if type-of($suffix) == string {
 
@@ -253,29 +263,34 @@ $all_ranges: ();
 
 			// If the full value is a color, return it
 			@if type-of($full_value) == color {
-				@return $full_value;
+				$found_suffixed_result: $full_value;
 			}
 		}
 	}
 
-	// At this point we did not find a color by a possible suffix,
-	// so we might have to generate it ourselves
-
-	// Get the wanted transformation function
-	$action: map.get($info, "action");
-
-	// If there is no action, return the current value
-	@if $action {
-		// Get the arguments
-		$args: map.get($info, "args");
-
-		// Get the function
-		$function: getActionFunction($action);
-
-		// Call the function
-		$result: meta.call($function, $base_value, $args);
+	@if $found_suffixed_result {
+		$result: $found_suffixed_result;
 	} @else {
-		$result: $base_value;
+
+		// At this point we did not find a color by a possible suffix,
+		// so we might have to generate it ourselves
+
+		// Get the wanted transformation function
+		$action: map.get($info, "action");
+
+		// If there is no action, return the current value
+		@if $action {
+			// Get the arguments
+			$args: map.get($info, "args");
+
+			// Get the function
+			$function: getActionFunction($action);
+
+			// Call the function
+			$result: meta.call($function, $base_value, $args);
+		} @else {
+			$result: $base_value;
+		}
 	}
 
 	// Should the result contrast with the base color?
@@ -284,7 +299,7 @@ $all_ranges: ();
 	// If the contrast is true, make sure the result has enough contrast
 	@if $contrast {
 		$original: $result;
-		$modified: contrast.stretch($base_value, $result);
+		$modified: fixContrast($base_value, $result);
 		$result: $modified;
 	}
 
@@ -577,6 +592,20 @@ $all_ranges: ();
 	@return $result;
 }
 
+// Modify the $fg color to have enough contrast with the $bg
+@function fixContrast($bg, $fg) {
+
+	// Get the current ratio
+	$ratio: contrast.ratio($bg, $fg);
+
+	// If the ratio is already good, return the fg color
+	@if $ratio >= $min_contrast_ratio {
+		@return $fg;
+	}
+
+	@return generateLightText($bg);
+}
+
 // @TODO: refactor & use
 // Generate a text color that has enough contrast to be used on the given color
 // Prefer lighter colors, but if the contrast ratio is too low, go darker
@@ -611,6 +640,24 @@ $all_ranges: ();
 	$dark: shade-color($color, 20%);
 
 	@return contrast.stretch($color, $dark);
+}
+
+// Set the default mode
+@function setDefaultMode($mode_name) {
+	$default_mode: $mode_name !global;
+	@return null;
+}
+
+// Set the default theme
+@function setDefaultTheme($theme_name) {
+	$default_theme: $theme_name !global;
+	@return null;
+}
+
+// Set the minimum contrast ratio
+@function setMinContrastRatio($ratio) {
+	$min_contrast_ratio: $ratio !global;
+	@return null;
 }
 
 // Output all color ranges
@@ -656,10 +703,23 @@ $all_ranges: ();
 	@each $theme_name, $theme in $all_themes {
 		$mode_values: map.get($theme, "modes");
 		$mode_values: map.get($mode_values, $mode_name);
+		$base_value: map.get($theme, "base_value");
 
 		@if type-of($mode_values) != map {
 			$mode_values: ();
 		}
+
+		// If this is the default mode & theme, extend the body
+		@if $mode_name == $default-mode and $theme_name == $default-theme {
+			@at-root {
+				body {
+					@extend .use-#{$theme_name}-theme;
+					@extend .use-#{$mode_name}-mode;
+				}
+			}
+		}
+
+		#{"--color-" + $theme_name}: #{$base_value};
 
 		@each $type, $value in $mode_values {
 

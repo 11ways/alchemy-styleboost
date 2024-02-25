@@ -134,7 +134,7 @@ $modes: (
 
 // The contrast ratio to reach against white, to determine if color changes from "light" to "dark". Acceptable values for WCAG 2.0 are 3, 4.5 and 7.
 // See https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
-$min-contrast-ratio:   4.5 !default;
+$min-contrast-ratio: 4.5 !default;
 
 /// @type color
 $contrast-dark-default: black !default;
@@ -147,6 +147,17 @@ $planifolia-colorspace: 'lab' !default;
 
 // Optional extra modes
 $extra-modes: () !default;
+
+// The default mode & theme
+$default-mode: "light" !default;
+$default-theme: "bright" !default;
+
+// Set the defaults in the boot module
+$temp: boot.setDefaultMode($default-mode);
+$temp: boot.setDefaultTheme($default-theme);
+
+// Set the minimum contrast ratio
+$temp: boot.setMinContrastRatio($min-contrast-ratio);
 
 // Merge all the values
 $colors: boot.initColors($colors, $extra-colors);
