@@ -1,4 +1,6 @@
-body {
-	background-color: var(--color-theme-bg);
-	color: var(--color-theme-bg-text);
+@layer defaults {
+	body {
+		background-color: var(--color-theme-bg);
+		color: var(--color-theme-bg-text);
+	}
 }

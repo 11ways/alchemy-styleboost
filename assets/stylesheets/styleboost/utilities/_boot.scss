@@ -1,0 +1,712 @@
+//
+// These are functions used to generate the main Styleboost colors & themes.
+// They probably won't be used by the end user.
+//
+@use "sass:map";
+@use "sass:list";
+@use "sass:meta";
+@use "contrast";
+@use "functions" as *;
+@use "mixins" as *;
+
+// All the base color definitions by name
+$all_base_colors: ();
+$all_base_shades: ();
+$all_base_named: ();
+
+// All themes & modes
+$all_themes: ();
+$all_modes: ();
+
+// All the theme-mode types (like fill, bg, accent, ...)
+// used over all the themes & modes
+$all_mode_types: ();
+
+// All the generated range of colors
+$color_ranges: ();
+$shade_ranges: ();
+$all_ranges: ();
+
+// Create a color definition object
+// This is a map with the color name, the color value,
+// and eventually the generated ranges.
+@function createColorDefinition($color_name, $value) {
+
+	$result: null;
+
+	@if type-of($value) == map {
+		$result: $value;
+	} @else {
+		$result: ("value": $value);
+	}
+
+	// Throw a warning if this color definition's value property is not a color
+	$value: map.get($result, "value");
+
+	@if type-of($value) != color {
+		@warn "The color #{$color_name} does not have valid color value: #{$value}.";
+	}
+
+	$result: map.set($result, "name", $color_name);
+	$ranges: generateColorRange($result);
+	$result: map.set($result, "ranges", $ranges);
+
+	@return $result;
+}
+
+// Create a theme definition object
+// No colors will be generated here, that happens in the mode generation.
+@function createThemeDefinition($theme_name, $value) {
+	$result: null;
+
+	@if type-of($value) == map {
+		$result: $value;
+	} @else {
+		$result: ("base": $value);
+	}
+
+	$base: map.get($result, "base");
+
+	// If the base is not a string, throw a warning
+	@if type-of($base) != string {
+		@warn "The base color for the theme #{$theme_name} is not a valid color name.";
+	}
+
+	// If the base is a string, get the color value
+	$base_value: getColorValue($base);
+
+	$result: map.set($result, "name", $theme_name);
+	$result: map.set($result, "base_value", $base_value);
+
+	// Get the mode values
+	$mode_values: map.get($result, "modes");
+
+	// If the mode values are not a map, create an empty map
+	@if type-of($mode_values) != map {
+		$mode_values: ();
+		$result: map.set($result, "modes", $mode_values);
+	}
+
+	@return $result;
+}
+
+// Create a mode definition object
+@function createModeDefinition($mode_name, $value) {
+
+	$result: null;
+
+	@if type-of($value) == map {
+		$result: $value;
+	} @else {
+		@warn "The mode #{$mode_name} does not have valid mode values.";
+		@return null;
+	}
+
+	// Set the mode name
+	$result: map.set($result, "name", $mode_name);
+
+	// Generate the themes for this mode!
+	$temp: generateModeThemes($mode_name, $result);
+
+	@return $result;
+}
+
+// Generate the mode themes
+@function generateModeThemes($mode_name, $mode) {
+
+	// Iterate over all the available themes and generate the theme values
+	// for the current mode
+	@each $theme_name, $theme in $all_themes {
+		$theme: generateModeTheme($mode_name, $mode, $theme_name, $theme);
+		$all_themes: map.set($all_themes, $theme_name, $theme) !global;
+	}
+
+	@return null;
+}
+
+// Generate the theme values for the current mode
+@function generateModeTheme($mode_name, $mode, $theme_name, $theme) {
+
+	// Get the base color of this theme
+	$base_name: map.get($theme, "base");
+	$base_value: map.get($theme, "base_value");
+
+	// Get the current mode values of the theme.
+	// This should already exist at this point.
+	$theme_modes: map.get($theme, "modes");
+
+	// And get the theme mode values
+	$mode_values: map.get($theme_modes, $mode_name);
+
+	// If the mode values are not a map, create an empty map
+	@if type-of($mode_values) != map {
+		$mode_values: ();
+	}
+
+	$text_instruction: null;
+	$mode_base_value: $base_value;
+	$mode_types: ();
+
+	// Iterate over all the mode entries.
+	// Most will be type values
+	// Like "fill", "bg", "accent", "emphasis", ...
+	// But there might also be special instructions like "text" and "base"
+	// And also string-values, those should be skipped too
+	@each $type, $value in $mode {
+
+		// If the value is a string, skip it
+		@if type-of($value) != map {
+			// Do nothing
+		} @else if $type == "name" {
+			// Do nothing
+		} @else if $type == "base" {
+			$mode_base_value: applyModeTransformation($mode, $type, $mode_values, $mode_base_value);
+		} @else if $type == "text" {
+			$text_instruction: $value;
+		} @else {
+			$mode_types: map.set($mode_types, $type, $value);
+			$all_mode_types: map.set($all_mode_types, $type, true) !global;
+		}
+	}
+
+	// If there are no text instructions, use default ones
+	@if not $text_instruction {
+		$text_instruction: (
+			"suffix"   : "700",
+			"action"   : "shade",
+			"args"     : 40%,
+			"contrast" : true,
+		);
+	}
+
+	// Iterate over all the mode types
+	// Like "fill", "bg", "accent", "emphasis", ...
+	@each $type, $value in $mode_types {
+
+		// Apply the mode type transformation
+		$calculated: applyModeTransformation($mode, $type, $mode_values, $mode_base_value);
+		$mode_values: map.set($mode_values, $type, $calculated);
+
+		@if $text_instruction {
+			$text_value: applyModeTransformation($mode, "text", $mode_values, $calculated, $text_instruction);
+			$mode_values: map.set($mode_values, #{$type} + "-text", $text_value);
+		}
+	}
+
+	// Make sure all the values are correctly stored
+	$theme_modes: map.set($theme_modes, $mode_name, $mode_values);
+	$theme: map.set($theme, "modes", $theme_modes);
+
+	@return $theme;
+}
+
+// Perform all the mode actions
+@function applyModeTransformation($mode, $type, $values, $base_value, $type_info: null) {
+
+	// See if the type has already been defined
+	$result: map.get($values, $type);
+
+	// If the result is a color, simply return it
+	@if type-of($result) == color {
+		@return $result;
+	}
+
+	// If the type is a string, resolve it
+	@if type-of($result) == string {
+		$result: getColorValue($result);
+	}
+
+	// If result is not truthy, use the base value
+	@if not $result {
+		$result: $base_value;
+	}
+
+	$base_value: $result;
+	$info: null;
+
+	@if $type_info {
+		$info: $type_info;
+	} @else {
+		$info: map.get($mode, $type);
+	}
+
+	// If there is no info, return the value as is
+	@if not $info {
+		@return $base_value;
+	}
+
+	// The transformation type might have a "suffix" property,
+	// meaning we could try to get the wanted value by color name & suffix!
+	$suffix: map.get($info, "suffix");
+
+	// If the suffix is a string, try to get the value by color name & suffix
+	@if type-of($suffix) == string {
+
+		// See if we can get the color definition
+		$color_definition: getColorDefinitionByValue($base_value);
+
+		// If the color definition is found, try to get the suffix value
+		@if $color_definition {
+			$color_name: map.get($color_definition, "name");
+			$full_name: "#{$color_name}-#{$suffix}";
+			$full_value: getColorValue($full_name);
+
+			// If the full value is a color, return it
+			@if type-of($full_value) == color {
+				@return $full_value;
+			}
+		}
+	}
+
+	// At this point we did not find a color by a possible suffix,
+	// so we might have to generate it ourselves
+
+	// Get the wanted transformation function
+	$action: map.get($info, "action");
+
+	// If there is no action, return the current value
+	@if $action {
+		// Get the arguments
+		$args: map.get($info, "args");
+
+		// Get the function
+		$function: getActionFunction($action);
+
+		// Call the function
+		$result: meta.call($function, $base_value, $args);
+	} @else {
+		$result: $base_value;
+	}
+
+	// Should the result contrast with the base color?
+	$contrast: map.get($info, "contrast");
+
+	// If the contrast is true, make sure the result has enough contrast
+	@if $contrast {
+		$original: $result;
+		$modified: contrast.stretch($base_value, $result);
+		$result: $modified;
+	}
+
+	@return $result;
+}
+
+// Get the action function
+@function getActionFunction($action) {
+
+	// If the action is a function, return it
+	@if type-of($action) == function {
+		@return $action;
+	}
+
+	// If the action is a string, try to get the function
+	@if type-of($action) != string {
+		@warn "The action #{$action} is not a valid action.";
+		@return null;
+	}
+
+	@if $action == "shade" {
+		@return meta.get-function("shade-color");
+	}
+
+	@if $action == "tint" {
+		@return meta.get-function("tint-color");
+	}
+
+	@return meta.get-function($action);
+}
+
+// Get a color definition by its value
+@function getColorDefinitionByValue($value) {
+
+	$result: null;
+
+	@each $color_name, $definition in $all_base_colors {
+		$color_value: map.get($definition, "value");
+
+		@if $color_value == $value {
+			$result: $definition;
+			@return $result;
+		}
+	}
+
+	@each $color_name, $definition in $all_base_shades {
+		$color_value: map.get($definition, "value");
+
+		@if $color_value == $value {
+			$result: $definition;
+			@return $result;
+		}
+	}
+
+	@return null;
+}
+
+// Resolve to a color value
+@function resolveToColor($map, $key, $default) {
+
+	$value: map.get($map, $key);
+
+	// If the value is a string, get the color value
+	@if type-of($value) == string {
+		@return getColorValue($value);
+	}
+
+	// If the value is a color, return that
+	@if type-of($value) == color {
+		@return $value;
+	}
+
+	// Return the default value
+	@return $default;
+}
+
+// Get a color value
+@function getColorValue($input) {
+
+	$type: type-of($input);
+
+	// If this is already a color, return it
+	@if $type == color {
+		@return $input;
+	}
+
+	// Look inside if it's a map
+	@if $type == map {
+
+		@if map.has-key($input, "value") {
+			$input: map.get($input, "value");
+		} @else {
+			@if map.has-key($input, "base") {
+				$input: map.get($input, "base");
+			} @else {
+				$input: map.get($input, "name");
+			}
+		}
+
+		$type: type-of($input);
+
+		// If this is a color now, return it
+		@if $type == color {
+			@return $input;
+		}
+	}
+
+	// If it is a string, look for it in the ranges
+	@if $type == string {
+		@return map.get($all_ranges, $input);
+	}
+
+	@warn "Could not find a valid color value for #{$input}";
+
+	@return null;
+}
+
+// Generate the color range of the given definition
+@function generateColorRange($definition) {
+
+	// Get the base information
+	$color_name: map.get($definition, "name");
+	$color_value: map.get($definition, "value");
+
+	// Get the ranges if they exist
+	$ranges: map.get($definition, "ranges");
+
+	// If the ranges don't exist, generate them
+	@if type-of($ranges) != map {
+		$ranges: ();
+	}
+
+	// Also put the base color in the ranges
+	$all_ranges: map.set($all_ranges, $color_name, $color_value) !global;
+
+	$ranges: ensureTint($ranges, $color_name, $color_value, "100", 80%);
+	$ranges: ensureTint($ranges, $color_name, $color_value, "200", 60%);
+	$ranges: ensureTint($ranges, $color_name, $color_value, "300", 40%);
+	$ranges: ensureTint($ranges, $color_name, $color_value, "400", 20%);
+	$ranges: ensureVariant($ranges, $color_name, $color_value, "500", false, false);
+	$ranges: ensureShade($ranges, $color_name, $color_value, "600", 20%);
+	$ranges: ensureShade($ranges, $color_name, $color_value, "700", 40%);
+	$ranges: ensureShade($ranges, $color_name, $color_value, "800", 60%);
+	$ranges: ensureShade($ranges, $color_name, $color_value, "900", 80%);
+
+	@return $ranges;
+}
+
+// Ensure the given tint is in the map
+@function ensureTint($map, $color_name, $color_value, $variant, $percentage) {
+	@return ensureVariant($map, $color_name, $color_value, $variant, "tint-color", $percentage);
+}
+
+// Ensure the given shade is in the map
+@function ensureShade($map, $color_name, $color_value, $variant, $percentage) {
+	@return ensureVariant($map, $color_name, $color_value, $variant, "shade-color", $percentage);
+}
+
+// Ensure the wanted variant is in the map.
+// If it is not, create it using the given function
+@function ensureVariant($map, $color_name, $color_value, $variant, $function, $arg) {
+
+	$target_key: $variant;
+	$global_key: "#{$color_name}-#{$variant}";
+	$result: null;
+
+	// If the map already has the variant, do nothing
+	@if map.has-key($map, $target_key) {
+		$result: map.get($map, $target_key);
+	} @else {
+
+		// If the function is explicitly false, don't do anything
+		@if $function == false {
+			$result: $color_value;
+		} @else {
+
+			@if type-of($function) == string {
+				$function: meta.get-function($function);
+			}
+
+			$result: meta.call($function, $color_value, $arg);
+		}
+	}
+
+	// Store this color in the all-ranges map
+	$all_ranges: map.set($all_ranges, $global_key, $result) !global;
+
+	@return map.set($map, $target_key, $result);
+}
+
+// Init the colors
+@function initColors($colors, $extra_colors) {
+
+	// First merge possible extra colors into the main colors map
+	$colors: map.merge($colors, $extra_colors);
+
+	// This will be the map that only contains the color values
+	$result: ();
+
+	@each $color_name, $value in $colors {
+		$definition: createColorDefinition($color_name, $value);
+		$value: map.get($definition, "value");
+		$result: map.set($result, $color_name, $value);
+
+		// Add the definition to the base colors map
+		$all_base_colors: map.set($all_base_colors, $color_name, $definition) !global;
+		$all_base_named: map.set($all_base_named, $color_name, $definition) !global;
+	}
+
+	@return $result;
+}
+
+// Init the shades
+@function initShades($shades, $extra_shades) {
+
+	// First merge possible extra shades into the main shades map
+	$result: map.merge($shades, $extra_shades);
+
+	// This will be the map that only contains the shade values
+	$result: ();
+
+	@each $shade_name, $value in $shades {
+		$definition: createColorDefinition($shade_name, $value);
+		$value: map.get($definition, "value");
+		$result: map.set($result, $shade_name, $value);
+
+		// Add the definition to the base shades map
+		$all_base_shades: map.set($all_base_shades, $shade_name, $definition) !global;
+		$all_base_named: map.set($all_base_named, $shade_name, $definition) !global;
+	}
+
+	@return $result;
+}
+
+// Init the themes.
+// Theme variants will be generated in the initModes function.
+@function initThemes($themes, $extra_themes) {
+
+	// Merge possible extra themes into the main themes map
+	$themes: map.merge($themes, $extra_themes);
+
+	// This will be the map that only contains the theme definitions
+	$result: ();
+
+	@each $theme_name, $value in $themes {
+		$definition: createThemeDefinition($theme_name, $value);
+		$result: map.set($result, $theme_name, $definition);
+
+		// Add the definition to the all-themes map
+		$all_themes: map.set($all_themes, $theme_name, $definition) !global;
+	}
+
+	@return $result;
+}
+
+// Init the modes
+@function initModes($modes, $extra_modes) {
+
+	// Merge possible extra modes into the main modes map
+	$modes: map.merge($modes, $extra_modes);
+
+	// This will be the map that only contains the mode definitions
+	$result: ();
+
+	@each $mode_name, $value in $modes {
+		$definition: createModeDefinition($mode_name, $value);
+		$result: map.set($result, $mode_name, $definition);
+
+		// Add the definition to the all-modes map
+		$all_modes: map.set($all_modes, $mode_name, $definition) !global;
+	}
+
+	@return $result;
+}
+
+// Flatten a map
+@function flattenMap($map, $prefix: "", $delimiter: ".") {
+	$result: ();
+
+	@each $key, $value in $map {
+		$full_key: $prefix + $key;
+
+		@if type-of($value) == map {
+			$result: map.merge($result, flattenMap($value, $full_key + $delimiter, $delimiter));
+		} @else {
+			$result: map.set($result, $full_key, $value);
+		}
+	}
+
+	@return $result;
+}
+
+// @TODO: refactor & use
+// Generate a text color that has enough contrast to be used on the given color
+// Prefer lighter colors, but if the contrast ratio is too low, go darker
+@function generateLightText($color) {
+
+	// Generate the preferred lighter version
+	$light: tint-color($color, 80%);
+	$light_ratio: contrast.ratio($light, $color);
+
+	@if $light_ratio >= 4.5 {
+		@return $light;
+	}
+
+	$lightest: tint-color($color, 90%);
+	$lightest_ratio: contrast.ratio($lightest, $color);
+
+	@if $lightest_ratio >= 4.5 {
+		@return $lightest;
+	}
+
+	// If the ratio was going down, let's see if we can just try white
+	@if $lightest_ratio > $light_ratio {
+		$temp: #fff;
+
+		@if contrast.ratio($color, $temp) >= 4.5 {
+			@return $temp;
+		}
+	}
+
+	// If we got this far, we might have to choose a darker version.
+	// To prevent it from being simply turned into black, start
+	$dark: shade-color($color, 20%);
+
+	@return contrast.stretch($color, $dark);
+}
+
+// Output all color ranges
+@mixin outputRanges($prefix: "--color-") {
+	@each $key, $value in $all_ranges {
+		#{$prefix + $key}: #{$value};
+	}
+}
+
+// Output the RGB color values
+@mixin outputRGBColors() {
+	@each $color_name, $definition in $all_base_colors {
+		$value: map.get($definition, "value");
+		$red: red($value);
+		$green: green($value);
+		$blue: blue($value);
+
+		#{"--color-" + $color_name + "-rgb"}: #{$red}, #{$green}, #{$blue};
+	}
+}
+
+// Output the numbered colors
+@mixin outputNumberedColors() {
+
+	$counter: 0;
+
+	@each $color_name, $definition in $all_base_colors {
+		$counter: $counter + 1;
+
+		$value: map.get($definition, "value");
+		$tint: map.get($definition, "ranges", "200");
+		$shade: map.get($definition, "ranges", "700");
+
+		#{"--color-" + $counter}: #{$value};
+		#{"--color-tint-" + $counter}: #{$tint};
+		#{"--color-shade-" + $counter}: #{$shade};
+	}
+}
+
+// Output the theme colors for the given mode
+@mixin outputThemeModeColors($mode_name) {
+	
+	@each $theme_name, $theme in $all_themes {
+		$mode_values: map.get($theme, "modes");
+		$mode_values: map.get($mode_values, $mode_name);
+
+		@if type-of($mode_values) != map {
+			$mode_values: ();
+		}
+
+		@each $type, $value in $mode_values {
+
+			// Construct the full name, like "primary-fill" or "warning-bg"
+			$full_name: "#{$theme_name}-#{$type}";
+
+			// Get the actual color value
+			$color: getColorValue($value);
+
+			// Output it!
+			#{"--color-" + $full_name}: #{$color};
+
+			// Also output the RGB variant
+			#{"--color-" + $full_name + "-rgb"}: red($color), green($color), blue($color);
+		}
+	}
+}
+
+// Output the mode colors
+@mixin outputModeColors() {
+	@each $mode_name, $mode in $all_modes {
+		.use-#{$mode_name}-mode {
+			@include outputThemeModeColors($mode_name);
+		}
+	}
+}
+
+// Output theme properties
+@mixin outputThemeProperties() {
+	@each $name, $theme in $all_themes {
+		.use-#{$name}-theme {
+			--color-theme: var(--color-#{$name});
+
+			@each $type, $_ in $all_mode_types {
+				--color-theme-#{$type}: var(--color-#{$name}-#{$type});
+				--color-theme-#{$type}-text: var(--color-#{$name}-#{$type}-text);
+
+				--color-theme-#{$type}-rgb: var(--color-#{$name}-#{$type}-rgb);
+			}
+		}
+	}
+}
+
+// Output exports
+@mixin outputExports() {
+	@include map-to-properties(flattenMap($all_base_colors), 'colors.');
+	@include map-to-properties(flattenMap($all_base_shades), 'shades.');
+	@include map-to-properties(flattenMap($all_modes), 'modes.');
+	@include map-to-properties(flattenMap($all_themes), 'themes.');
+}

@@ -5,40 +5,67 @@
 		<% this.foundation({protoblast: true}) %>
 		<% style('styleboost/showcase') %>
 	</head>
-	<body class="use-main-theme">
+	<body>
 		<main>
-			<h1>Get started with Styleboost</h1>
+			<header>
+				<h1>Get started with Styleboost</h1>
 
-			<p>
-				Discover Styleboost, the custom SCSS framework for Alchemy MVC.
-				<label class="enable-dark-mode-label">
-					<input type="checkbox" class="enable-dark-mode">
-					<span>Dark mode</span>
-				</label>
-			</p>
+				<p>
+					Discover Styleboost, the custom SCSS framework for Alchemy MVC.
+				</p>
 
-			<div class="color-showcase">
-				{% each color_map as color_name, values %}
+				<div>
+					<label class="select-mode-label">
+						<span>Select color mode:</span>
+						<select class="color-modes">
+							{% each css_info.modes as mode %}
+								<option value="{{ mode.name }}">{{ mode.name }}</option>
+							{% /each %}
+						</select>
+					</label>
+
+					<label class="select-theme-label">
+						<span>Select color theme:</span>
+						<select class="color-themes">
+							{% each css_info.themes as theme %}
+								<option value="{{ theme.name }}">{{ theme.name }}</option>
+							{% /each %}
+						</select>
+					</label>
+				</div>
+			</header>
+
+			<pre hidden>
+				{{ JSON.stringify(css_info, null, '\t') }}
+			</pre>
+			
+			{% macro colorShowcase %}
+				{% each colors as color_name, color_def %}
 					<div class="color-group">
-						{% each values as entry %}
+						{% each color_def.ranges as key, value %}
 							<div class="color-entry">
-								<div class="color-value" style="background-color: var(--color-{% entry.name %})"></div>
+								<div class="color-value" style="background-color: var(--color-{% color_name %}-{% key %})"></div>
 								<div class="color-info">
 									<span class="color-name">
-										{{ entry.name }}
+										{{color_name}}-{{ key }}
 									</span>
 									<span class="color-hex">
-										{{ entry.value }}
+										{{ value }}
 									</span>
 								</div>
 							</div>
 						{% /each %}
 					</div>
 				{% /each %}
+			{% /macro %}
+
+			<div class="color-showcase">
+				{% run colorShowcase colors=css_info.colors %}
+				{% run colorShowcase colors=css_info.shades %}
 			</div>
 
 			{% macro themeShowcase %}
-				{% each theme_names as theme_name %}
+				{% each css_info.themes as theme_name, theme_def %}
 					<div class="theme-group use-{% theme_name %}-theme">
 						<span
 							class="theme-name"
@@ -90,14 +117,8 @@
 				{% /each %}
 			{% /macro %}
 
-			<div class="theme-showcase-dark use-dark-mode">
-				{% run themeShowcase theme_names=theme_names %}
-				{% run themeShowcase theme_names=special_theme_names %}
-			</div>
-
-			<div class="theme-showcase-light">
-				{% run themeShowcase theme_names=theme_names %}
-				{% run themeShowcase theme_names=special_theme_names %}
+			<div class="theme-showcase">
+				{% run themeShowcase %}
 			</div>
 
 			{% macro tableContents %}
@@ -131,7 +152,7 @@
 			{% /macro %}
 
 			{% macro tableShowcase %}
-				{% each theme_names as theme_name %}
+				{% each css_info.themes as theme_name, theme_def %}
 					<div class="table-group use-{% theme_name %}-theme">
 						<span
 							class="theme-name"
@@ -153,16 +174,26 @@
 				{% /each %}
 			{% /macro %}
 
-			<div class="table-showcase use-dark-mode">
-				{% run tableShowcase theme_names=theme_names %}
-				{% run tableShowcase theme_names=special_theme_names %}
+			<div class="table-showcase" hidden>
+				{% run tableShowcase %}
 			</div>
 
-			<div class="table-showcase use-light-mode">
-				{% run tableShowcase theme_names=theme_names %}
-				{% run tableShowcase theme_names=special_theme_names %}
-			</div>
+			<div class="table-showcase">
+				<div class="table-group">
 
+					<table class="table">
+						{% run tableContents %}
+					</table>
+
+					<table class="table table-striped">
+						{% run tableContents %}
+					</table>
+
+					<table class="table table-hover">
+						{% run tableContents %}
+					</table>
+				</div>
+			</div>
 		</main>
 
 		<!-- This is an internal element you should not worry about -->

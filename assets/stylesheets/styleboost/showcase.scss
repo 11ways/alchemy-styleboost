@@ -1,11 +1,45 @@
 @use "styleboost" with (
-	$red: #990505,
-	$base-font-size: 14px,
-	$primary: "blue",
-	$color-main: (
-		"base": "yellow",
-		"fill": "green",
-		"bg": "blue",
+	// If you want to add or override existing colors, use $extra-colors.
+	// If you want to replace all colors, use $colors.
+	// The values have to be valid color values or maps, not strings.
+	// Honor the color names: do not turn "red" into blue eg.
+	$extra-colors: (
+		"purplish": #100099,
+	),
+	// If you want to add or override existing themes, use $extra-themes.
+	// If you want to replace all themes, use $themes.
+	// The values should be strings that match the color names.
+	// Do not use color names as theme names.
+	$extra-themes: (
+		"passion": "red",
+	),
+	// You can also add or override the "modes":
+	// These define how the themes are generated.
+	// By default there are only 2 modes: light and dark.
+	// If you want to add or override existing modes, use $extra-modes.
+	// If you want to replace all modes, use $modes.
+	$extra-modes: (
+		"pastel": (
+			"base": (
+				"suffix": "300",
+				"action": false,
+			),
+			"fill": (
+				"action": false,
+			),
+			"bg": (
+				"action": "tint",
+				"args"  : 80%,
+			),
+			"accent": (
+				"action": "tint",
+				"args"  : 60%,
+			),
+			"emphasis": (
+				"action": "shade",
+				"args"  : 20%,
+			),
+		),
 	)
 );
 @use "alchemy";
@@ -54,8 +88,6 @@
 	}
 }
 
-.theme-showcase-light,
-.theme-showcase-dark,
 .theme-showcase {
 	display: flex;
 	flex-flow: column;
@@ -145,10 +177,32 @@
 	}
 }
 
-body:has(input.enable-dark-mode:checked) {
-	@extend .use-dark-mode;
+.select-mode-label {
+	user-select: none;
 }
 
-.enable-dark-mode-label {
-	user-select: none;
+header {
+	background-color: var(--color-theme-bg);
+	border-radius: 5px;
+	border: 2px solid var(--color-theme-accent);
+	position: sticky;
+	top: 10px;
+	margin: 2rem;
+	padding: 1rem;
+
+	h1 {
+		margin-top: 0;
+	}
+}
+
+@each $name, $mode in styleboost.$modes {
+	body:has(.select-mode-label option[value="#{$name}"]:checked) {
+		@extend .use-#{$name}-mode;
+	}
+}
+
+@each $name, $theme in styleboost.$themes {
+	body:has(.select-theme-label option[value="#{$name}"]:checked) {
+		@extend .use-#{$name}-theme;
+	}
 }

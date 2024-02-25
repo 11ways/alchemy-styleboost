@@ -48,19 +48,19 @@
 	&-striped {
 		tbody > tr:nth-of-type(odd) > * {
 			--table-color-text-type: var(--table-color-striped-text, var(--color-theme-accent-text));
-			--table-color-bg-type: var(--table-color-striped-bg, var(--color-theme-accent-alpha-20));
+			--table-color-bg-type: var(--table-color-striped-bg, rgba(var(--color-theme-accent-rgb), 0.2));
 		}
 	}
 
 	&-hover {
 		tbody > tr:hover > * {
 			--table-color-text-state: var(--table-color-hover-text, var(--color-theme-accent-text));
-			--table-color-bg-state: var(--table-color-hover-bg, var(--color-theme-accent-alpha-40));
+			--table-color-bg-state: var(--table-color-hover-bg, rgba(var(--color-theme-accent-rgb), 0.4));
 		}
 	}
 
 	tbody > tr.selected > * {
 		--table-color-text-state: var(--table-color-active-text, var(--color-theme-accent-text));
-		--table-color-bg-state: var(--table-color-active-bg, var(--color-theme-accent-alpha-60));
+		--table-color-bg-state: var(--table-color-active-bg, rgba(var(--color-theme-accent-rgb), 0.6));
 	}
 }

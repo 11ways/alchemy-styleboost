@@ -2,82 +2,135 @@
 @use "styleboost/utilities/functions" as *;
 @use "styleboost/utilities/contrast" as contrast;
 @use "styleboost/utilities/mixins" as *;
+@use "styleboost/utilities/boot";
 
-$gray-100: #f8f9fa !default;
-$gray-200: #e9ecef !default;
-$gray-300: #dee2e6 !default;
-$gray-400: #ced4da !default;
-$gray-500: #adb5bd !default;
-$gray-600: #6c757d !default;
-$gray-700: #495057 !default;
-$gray-800: #343a40 !default;
-$gray-900: #212529 !default;
+// The CSS cascade layers.
+// This list can be changed to modify the importance of the layers,
+// but removing a layer from this list does not mean it won't get made.
+$layers: (
+	"reset",
+	"defaults",
+	"patterns",
+	"components",
+	"themes",
+	"utilities",
+	"overrides",
+) !default;
 
-// Shades
-$white:    #fff !default;
-$black:    #000 !default;
-$gray:     #a4adb6 !default;
-
-// Colors
-$red:     #dc3535 !default;
-$orange:  #fd7e14 !default;
-$yellow:  #ffc107 !default;
-$olive:   #808000 !default;
-$lime:    #94d82d !default;
-$green:   #008000 !default;
-$teal:    #20c997 !default;
-$cyan:    #0dcaf0 !default;
-$blue:    #0d6efd !default;
-$navy:    #1310f2 !default;
-$indigo:  #5d10f2 !default;
-$purple:  #6f42c1 !default;
-$grape:   #be4bdb !default;
-$cerise:  #D63384 !default;
-$pink:    #f95f8f !default;
-$salmon:  #fa5e57 !default;
-
-// The color map
+// The default colors
 $colors: (
-	"red":     $red,
-	"orange":  $orange,
-	"yellow":  $yellow,
-	"olive":   $olive,
-	"lime":    $lime,
-	"green":   $green,
-	"teal":    $teal,
-	"cyan":    $cyan,
-	"blue":    $blue,
-	"navy":    $navy,
-	"indigo":  $indigo,
-	"purple":  $purple,
-	"grape":   $grape,
-	"cerise":  $cerise,
-	"pink":    $pink,
-	"salmon":  $salmon,
+	"red":     #dc3535,
+	"orange":  #fd7e14,
+	"yellow":  #ffc107,
+	"olive":   #808000,
+	"lime":    #94d82d,
+	"green":   #008000,
+	"teal":    #20c997,
+	"cyan":    #0dcaf0,
+	"blue":    #0d6efd,
+	"navy":    #1310f2,
+	"indigo":  #5d10f2,
+	"purple":  #6f42c1,
+	"grape":   #be4bdb,
+	"cerise":  #D63384,
+	"pink":    #f95f8f,
+	"salmon":  #fa5e57,
 ) !default;
 
-// The shades map
+// Optional extra colors
+$extra-colors: () !default;
+
+// The default shades
 $shades: (
-	"black": $black,
-	"gray": $gray,
-	"white": $white,
+	"black" : #000,
+	"gray"  : #a4adb6,
+	"white" : #fff,
 ) !default;
 
-// Theme colors
-$primary:    $blue !default;
-$secondary:  $gray-600 !default;
-$success:    $green !default;
-$info:       $cyan !default;
-$warning:    $yellow !default;
-$danger:     $red !default;
-$light:      $gray-100 !default;
-$dark:       $gray-900 !default;
+// Optional extra shades
+$extra-shades: () !default;
 
-// Special colors
-$color-true: $green !default;
-$color-false: $red !default;
-$color-inactive: $gray-500 !default;
-$color-main: $gray-400 !default;
+// The default themes
+$themes: (
+	"primary"   : "blue",
+	"secondary" : "gray-600",
+	"success"   : "green",
+	"info"      : "cyan",
+	"warning"   : "yellow",
+	"danger"    : "red",
+	"bright"    : "gray-100",
+	"dim"       : "gray-900",
+	"truthy"    : "green",
+	"falsy"     : "red",
+	"inactive"  : "gray-400",
+) !default;
+
+// Optional extra themes
+$extra-themes: () !default;
+
+// The default modes
+$modes: (
+	"light": (
+		// Special instruction for text colors
+		"text": (
+			"suffix"   : "700",
+			"action"   : "shade",
+			"args"     : 40%,
+			"contrast" : true,
+		),
+
+		// Default types
+		"fill": (
+			"suffix": "500",
+			"action": false,
+		),
+		"bg": (
+			"suffix": "100",
+			"action": "tint",
+			"args"  : 80%,
+		),
+		"accent": (
+			"suffix": "200",
+			"action": "tint",
+			"args"  : 60%,
+		),
+		"emphasis": (
+			"suffix": "600",
+			"action": "shade",
+			"args"  : 20%,
+		),
+	),
+	"dark": (
+		// Special instruction for text colors
+		"text": (
+			"suffix"   : "300",
+			"action"   : "tint",
+			"args"     : 40%,
+			"contrast" : true,
+		),
+
+		// Default types
+		"fill": (
+			"suffix": "500",
+			"action": false,
+		),
+		"bg": (
+			"suffix": "900",
+			"action": "shade",
+			"args"  : 80%,
+		),
+		"accent": (
+			"suffix": "700",
+			"action": "shade",
+			"args"  : 40%,
+		),
+		"emphasis": (
+			"suffix": "200",
+			"action": "tint",
+			"args"  : 20%,
+		),
+	),
+) !default;
 
 // The contrast ratio to reach against white, to determine if color changes from "light" to "dark". Acceptable values for WCAG 2.0 are 3, 4.5 and 7.
 // See https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
@@ -92,269 +145,31 @@ $contrast-light-default: white !default;
 /// @type string
 $planifolia-colorspace: 'lab' !default;
 
-// Customize the light and dark text colors for use in our color contrast function.
-$color-contrast-dark:      $black !default;
-$color-contrast-light:     $white !default;
+// Optional extra modes
+$extra-modes: () !default;
 
-// Spacing
-//
-// Control the default styling of most Bootstrap elements by modifying these
-// variables. Mostly focused on spacing.
-// You can add more entries to the $spacers map, should you need more variation.
+// Merge all the values
+$colors: boot.initColors($colors, $extra-colors);
+$shades: boot.initShades($shades, $extra-shades);
+$themes: boot.initThemes($themes, $extra-themes);
+$modes: boot.initModes($modes, $extra-modes);
 
-$spacer: 1rem !default;
-$spacers: (
-  0: 0,
-  1: $spacer * .25,
-  2: $spacer * .5,
-  3: $spacer,
-  4: $spacer * 1.5,
-  5: $spacer * 3,
-) !default;
+// Declare all the layers in their order
+@layer #{$layers};
 
-$body-text-align:           null !default;
-$body-color:                $gray-900 !default;
-$body-bg:                   $white !default;
-
-$body-secondary-color:      rgba($body-color, .75) !default;
-$body-secondary-bg:         $gray-200 !default;
-
-$body-tertiary-color:       rgba($body-color, .5) !default;
-$body-tertiary-bg:          $gray-100 !default;
-
-$body-emphasis-color:       $black !default;
-
-$link-color:                              $primary !default;
-$link-decoration:                         underline !default;
-$link-shade-percentage:                   20% !default;
-$link-hover-color:                        shift-color($link-color, $link-shade-percentage) !default;
-$link-hover-decoration:                   null !default;
-
-$stretched-link-pseudo-element:           after !default;
-$stretched-link-z-index:                  1 !default;
-
-$icon-link-gap:               .375rem !default;
-$icon-link-underline-offset:  .25em !default;
-$icon-link-icon-size:         1em !default;
-$icon-link-icon-transition:   .2s ease-in-out transform !default;
-$icon-link-icon-transform:    translate3d(.25em, 0, 0) !default;
-
-// Prepare the color maps
-$colorsmap: ();
-$shadesmap: ();
-
-// This will contain all the names of themes, colors & shades
-$all_names: ();
-
-// Generate all the color shades & tints
-@each $color, $value in $colors {
-	$all_names: map.set($all_names, $color, $value);
-	$colorsmap: generate-color-range($colorsmap, $color, $value);
-}
-
-// Generate all the black/white/grey shades & tints
-@each $shade, $value in $shades {
-	$all_names: map.set($all_names, $shade, $value);
-	$shadesmap: generate-color-range($shadesmap, $shade, $value);
-}
-
-// Create a map with all the available colors & shades
-$all_colors: map.merge(map.merge($colors, $colorsmap), $shadesmap);
-
-// Normalize the theme colors (they might be strings)
-$primary: get-from-map-if-string($all_colors, $primary);
-$secondary: get-from-map-if-string($all_colors, $secondary);
-$success: get-from-map-if-string($all_colors, $success);
-$danger: get-from-map-if-string($all_colors, $danger);
-$warning: get-from-map-if-string($all_colors, $warning);
-$light: get-from-map-if-string($all_colors, $light);
-$dark: get-from-map-if-string($all_colors, $dark);
-
-// Generate the theme colors map
-$theme-colors: (
-	"primary":    $primary,
-	"secondary":  $secondary,
-	"success":    $success,
-	"info":       $info,
-	"warning":    $warning,
-	"danger":     $danger,
-	"light":      $light,
-	"dark":       $dark
-) !default;
-
-// Also normalize the special colors
-$color-true: get-from-map-if-string($all_colors, $color-true);
-$color-false: get-from-map-if-string($all_colors, $color-false);
-$color-inactive: get-from-map-if-string($all_colors, $color-inactive);
-$color-main: get-from-map-if-string($all_colors, $color-main);
-
-// Generate the special theme colors map
-// These are "special" because they might be aliases to other themes,
-// or have a very specific usecase.
-// So they should not be part of the "standard" theme usecase.
-$special-colors: (
-	"true"     : $color-true,
-	"false"    : $color-false,
-	"inactive" : $color-inactive,
-	"main"     : $color-main,
-) !default;
-
-$special_colors_map: ();
-@each $color, $value in $special-colors {
-	$all_names: map.set($all_names, $color, $value);
-	$special_colors_map: generate-color-range($special-colors, $color, $value);
-}
-
-// These will contain all their respective values
-$theme_map: ();
-$special_theme_map: ();
-$light_theme_map: ();
-$dark_theme_map: ();
-
-// Generate all the theme values
-@each $name, $value in $theme-colors {
-	$all_names: map.set($all_names, $name, $value);
-	$theme_map: map.set($theme_map, $name, $value);
-	$light_theme_map: generate-light-theme-values($light_theme_map, $name, $value);
-	$dark_theme_map: generate-dark-theme-values($dark_theme_map, $name, $value);
-}
-
-// Generate all the extra theme values (dark mode)
-@each $name, $value in $special-colors {
-
-	// Make sure to get the base-color.
-	// The value might be a map
-	$base-color: get-base-color($value);
-
-	$all_names: map.set($all_names, $name, $base-color);
-	$special_theme_map: map.set($special_theme_map, $name, $base-color);
-
-	$light_theme_map: generate-light-theme-values($light_theme_map, $name, $value);
-	$dark_theme_map: generate-dark-theme-values($dark_theme_map, $name, $value);
-}
-
-// Create the root CSS variables
-:root {
-
-	// Light theme values
-	@include map-to-base-properties($light_theme_map, "--color-");
-
-	// Base shade name to values
-	@include map-to-base-properties($shades, "--color-");
-
-	// Shade ranges
-	@include map-to-base-properties($shadesmap, "--color-");
-
-	// Base color name to values
-	@include map-to-base-properties($colors, "--color-");
-
-	// Color ranges
-	@include map-to-base-properties($colorsmap, "--color-");
-
-	// Special colors
-	@include map-to-base-properties($special-colors, "--color-");
-
-	// Special color ranges
-	@include map-to-base-properties($special_colors_map, "--color-");
-
-	// Export color as numbers too
-	// Also export it as a numbered color
-	$counter: 0;
-
-	@each $name, $value in $colors {
-		$counter: $counter + 1;
-		#{"--color-" + $counter}: #{$value};
-
-		$tint: map.get($colorsmap, "#{$name}-200");
-		$shade: map.get($colorsmap, "#{$name}-700");
-		$shade: contrast.stretch($tint, $shade);
-
-		#{"--color-tint-" + $counter}: $tint;
-		#{"--color-shade-" + $counter}: $shade;
+@layer defaults {
+	:root {
+		@include boot.outputRanges();
+		@include boot.outputNumberedColors();
+		@include boot.outputRGBColors();
 	}
-
-	// Default theme values
-	--color-theme: var(--color-main);
-	--color-theme-fill: var(--color-main-fill);
-	--color-theme-fill-text: var(--color-main-fill-text);
-	--color-theme-bg: var(--color-main-bg);
-	--color-theme-bg-text: var(--color-main-bg-text);
-	--color-theme-accent: var(--color-main-accent);
-	--color-theme-accent-text: var(--color-main-accent-text);
-	--color-theme-emphasis: var(--color-main-emphasis);
-	--color-theme-emphasis-text: var(--color-main-emphasis-text);
-
-	--color-theme-100: var(--color-main-100);
-	--color-theme-200: var(--color-main-200);
-	--color-theme-300: var(--color-main-300);
-	--color-theme-400: var(--color-main-400);
-	--color-theme-500: var(--color-main-500);
-	--color-theme-600: var(--color-main-600);
-	--color-theme-700: var(--color-main-700);
-	--color-theme-800: var(--color-main-800);
-	--color-theme-900: var(--color-main-900);
 }
 
-// Generate theme classes
-@include use-theme-classes($theme_map);
-@include use-theme-classes($special_theme_map);
-
-// Add the dark mode variables
-.use-dark-mode {
-	// Dark theme values
-	@include map-to-base-properties($dark_theme_map, "--color-");
-
-	background-color: var(--color-theme-bg);
-	color: var(--color-theme-bg-text);
-}
-
-// Add the light mode variables
-.use-light-mode {
-	// Dark theme values
-	@include map-to-base-properties($light_theme_map, "--color-");
-
-	background-color: var(--color-theme-bg);
-	color: var(--color-theme-bg-text);
-}
-
-// Export the color map
 :export {
+	@include boot.outputExports();
+}
 
-	// Export shade names
-	@each $shade, $value in $shades {
-		$value: get-base-color($value);
-		#{"_shadename_" + $shade}: #{$shade};
-	}
-
-	// Export shade values
-	@each $shade, $value in $shadesmap {
-		$value: get-base-color($value);
-		#{"_shade_" + $shade}: #{$value};
-	}
-
-	// Export color names
-	@each $color, $value in $colors {
-		$value: get-base-color($value);
-		#{"_colorname_" + $color}: #{$color};
-	}
-
-	// Export the color values
-	@each $color, $value in $colorsmap {
-		$value: get-base-color($value);
-		#{"_color_" + $color}: #{$value};
-	}
-
-	// Export theme names
-	@each $name, $value in $theme-colors {
-		$value: get-base-color($value);
-		#{"_themename_" + $name}: #{$name};
-		#{"_theme_" + $name}: #{$value};
-	}
-
-	// Export special theme names
-	@each $name, $value in $special-colors {
-		$value: get-base-color($value);
-		#{"_specialthemename_" + $name}: #{$name};
-		#{"_specialtheme_" + $name}: #{$value};
-	}
+@layer themes {
+	@include boot.outputModeColors();
+	@include boot.outputThemeProperties();
 }

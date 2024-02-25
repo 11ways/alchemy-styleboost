@@ -31,6 +31,26 @@ $_normalize-exclude: () !default;
 }
 
 @mixin normalize($include: (all), $exclude: ()) {
+
+	@layer reset {
+		@include _resetNormalize($include, $exclude);
+	}
+
+	@layer utilities {
+		@include _utilityNormalize($include, $exclude);
+	}
+}
+
+@mixin _utilityNormalize($include: (all), $exclude: ()) {
+	@if _normalize-include(misc) {
+		// Make sure hidden elements are not displayed.
+		[hidden] {
+			display: none !important;
+		}
+	}
+}
+
+@mixin _resetNormalize($include: (all), $exclude: ()) {
 	// Initialize the helper function by passing it this mixin's parameters.
 	$init: _normalize-include($include, $exclude);
 
@@ -546,13 +566,6 @@ $_normalize-exclude: () !default;
 		 */
 		template {
 			display: none;
-		}
-
-		/**
-		 * Add the correct display in IE 10.
-		 */
-		[hidden] {
-			display: none !important;
 		}
 	}
 
