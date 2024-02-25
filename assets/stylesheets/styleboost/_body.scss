@@ -1,5 +1,6 @@
 @layer defaults {
 	body {
+		accent-color: var(--color-theme-fill);
 		background-color: var(--color-theme-bg);
 		color: var(--color-theme-bg-text);
 	}

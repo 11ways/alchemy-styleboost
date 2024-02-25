@@ -7,6 +7,7 @@
 @forward "body";
 @forward "button";
 @forward "table";
+@forward "inputs";
 
 @use "styleboost/utilities/functions";
 @use "styleboost/utilities/mixins";
@@ -18,5 +19,6 @@
 @use "body";
 @use "button";
 @use "table";
+@use "inputs";
 
 @include normalize.normalize();
