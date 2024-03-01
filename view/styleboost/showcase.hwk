@@ -6,8 +6,8 @@
 		<% style('styleboost/showcase') %>
 	</head>
 	<body>
-		<main>
-			<header>
+		<main class="content-columns">
+			<header class="full-column">
 				<h1>Get started with Styleboost</h1>
 
 				<p>
@@ -179,8 +179,9 @@
 			</div>
 
 			<div class="table-showcase">
-				<div class="table-group">
+				<h2>Tables</h2>
 
+				<div class="table-group">
 					<table class="table">
 						{% run tableContents %}
 					</table>
@@ -192,6 +193,119 @@
 					<table class="table table-hover">
 						{% run tableContents %}
 					</table>
+				</div>
+			</div>
+
+			<div class="card-showcase">
+				<h2>Cards</h2>
+
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-header-title">
+							Card title
+						</h3>
+						<div class="card-header-controls">
+							<button class="button">
+								<al-icon icon-name="recycle"></al-icon>
+							</button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div>
+						Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros.
+						Donec id elit non mi porta gravida at eget metus.
+						Cum sociis natoque penatibus et magnis dis parturient montes,
+						nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
+						</div>
+					</div>
+					<div class="card-footer">
+						<span>This is the footer!</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="menu-showcase">
+				<h2>Menus</h2>
+
+				<div class="example-menu-wrapper">
+					<aside class="menu">
+						<ul class="menu-list">
+							<li class="menu-item">
+								<a class="menu-link" href="#">Home</a>
+							</li>
+							<li class="menu-item">
+								<a class="menu-link" href="#">Documentation</a>
+							</li>
+							<li class="menu-item">
+								<label class="menu-link">
+									<input type="radio" name="example-menu">
+									<span>FAQ (Radio)</span>
+									<span class="menu-arrow"></span>
+								</label>
+								<ul class="menu-list">
+									<li class="menu-item">
+										<a class="menu-link" href="#">General</a>
+									</li>
+									<li class="menu-item">
+										<a class="menu-link" href="#">Security</a>
+									</li>
+								</ul>
+							</li>
+							<li class="menu-item">
+								<label class="menu-link">
+									<input type="radio" name="example-menu">
+									<span>Community (Radio)</span>
+									<span class="menu-arrow"></span>
+								</label>
+								<ul class="menu-list">
+									<li class="menu-item">
+										<a class="menu-link" href="#">Forums</a>
+									</li>
+									<li class="menu-item">
+										<a class="menu-link" href="#">Blog</a>
+									</li>
+								</ul>
+							</li>
+
+							<li class="menu-item">
+								<label class="menu-link">
+									<input type="checkbox">
+									<span>Community (Checkbox)</span>
+									<span class="menu-arrow"></span>
+								</label>
+								<ul class="menu-list">
+									<li class="menu-item">
+										<a class="menu-link" href="#">Forums</a>
+									</li>
+									<li class="menu-item">
+										<a class="menu-link" href="#">Blog</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</aside>
+				</div>
+			</div>
+
+			<div class="form-showcase">
+				<h2>Forms & inputs</h2>
+
+				<div class="example-form-wrapper">
+					<form class="column">
+						<label>
+							<span>Text input</span>
+							<input type="text" placeholder="Text placeholder">
+						</label>
+
+						<label>
+							<span>Text input with icons</span>
+							<div class="control">
+								<input class="input" type="text" placeholder="Text placeholder">
+								<al-icon class="prefix" icon-name="user"></al-icon>
+								<al-icon class="suffix" icon-name="check"></al-icon>
+							</div>
+						</label>
+					</form>
 				</div>
 			</div>
 		</main>

@@ -1,0 +1,30 @@
+@use "styleboost/utilities/mixins";
+
+@layer defaults {
+
+	// The generic heading
+	.heading,
+	.footing {
+		display: block;
+		font-size: 0.9rem;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	.heading {
+		margin-bottom: 0.3rem;
+	}
+
+	.footing {
+		margin-top: 0.3rem;
+	}
+
+	// All the h1-h6 headers & classes
+	@include mixins.all-headers {
+		margin-top: 0;
+		margin-bottom: .5rem;
+		font-weight: 500;
+		line-height: 1.2;
+		color: var(--heading-color-text, var(--color-theme-bg-text));
+	}
+}

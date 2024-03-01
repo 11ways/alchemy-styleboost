@@ -3,22 +3,23 @@
 @forward "styleboost/variables";
 @forward "styleboost/utilities/contrast";
 @forward "styleboost/utilities/color";
+@forward "styleboost/utilities/responsive";
 @forward "normalize/variables";
+@forward "block";
 @forward "body";
+@forward "box";
 @forward "button";
+@forward "column";
+@forward "divider";
+@forward "level";
 @forward "table";
 @forward "inputs";
+@forward "content_columns";
+@forward "card";
+@forward "headings";
+@forward "menu";
+@forward "typography";
 
-@use "styleboost/utilities/functions";
-@use "styleboost/utilities/mixins";
-@use "styleboost/variables";
-@use "styleboost/utilities/contrast";
-@use "styleboost/utilities/color";
 
 @use "normalize/normalize";
-@use "body";
-@use "button";
-@use "table";
-@use "inputs";
-
 @include normalize.normalize();

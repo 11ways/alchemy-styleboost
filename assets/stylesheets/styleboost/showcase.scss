@@ -5,6 +5,12 @@
 	// Honor the color names: do not turn "red" into blue eg.
 	$extra-colors: (
 		"purplish": #100099,
+
+		// Colors with dashes in them are allowed,
+		// but they will not be added to the "numbered" list
+		"main-bg": #0F1014,
+		"main-color": #f5f5f5,
+		"comp-bg": #151713,
 	),
 	// If you want to add or override existing themes, use $extra-themes.
 	// If you want to replace all themes, use $themes.
@@ -12,6 +18,21 @@
 	// Do not use color names as theme names.
 	$extra-themes: (
 		"passion": "red",
+		"app": (
+			"base": "main-color",
+
+			"modes": (
+				"light": (
+					"bg": "gray-100",
+				),
+				"dark": (
+					"bg": "main-bg",
+				),
+				"pastel": (
+					"bg": "indigo-100",
+				)
+			),
+		),
 	),
 	// You can also add or override the "modes":
 	// These define how the themes are generated.
@@ -40,7 +61,14 @@
 				"args"  : 20%,
 			),
 		),
-	)
+	),
+
+	// Specific themes to use per mode & component
+	$components: (
+		// Enable this to make the "passion" theme the default for the "card" component
+		//"card": "passion",
+		"body": "app",
+	),
 );
 @use "alchemy";
 
@@ -183,6 +211,7 @@
 
 header {
 	background-color: var(--color-theme-bg);
+	color: var(--color-theme-bg-text);
 	border-radius: 5px;
 	border: 2px solid var(--color-theme-accent);
 	position: sticky;
@@ -205,4 +234,8 @@ header {
 	body:has(.select-theme-label option[value="#{$name}"]:checked) {
 		@extend .use-#{$name}-theme;
 	}
+}
+
+main {
+	padding-bottom: 3rem;
 }

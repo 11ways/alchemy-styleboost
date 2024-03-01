@@ -1,4 +1,6 @@
 @use "styleboost/utilities/functions" as *;
+@use "sass:string";
+@use "sass:list";
 
 // Generate CSS properties
 @mixin map-to-properties($map, $prefix) {
@@ -15,56 +17,81 @@
 	}
 }
 
-// Generate use-theme classes
-@mixin use-theme-classes($map) {
-	// Generate theme classes
-	@each $name, $value in $map {
-		.use-#{$name}-theme {
-			--color-theme: var(--color-#{$name});
-			--color-theme-fill: var(--color-#{$name}-fill);
-			--color-theme-fill-text: var(--color-#{$name}-fill-text);
-			--color-theme-bg: var(--color-#{$name}-bg);
-			--color-theme-bg-text: var(--color-#{$name}-bg-text);
-			--color-theme-accent: var(--color-#{$name}-accent);
-			--color-theme-accent-text: var(--color-#{$name}-accent-text);
-			--color-theme-emphasis: var(--color-#{$name}-emphasis);
-			--color-theme-emphasis-text: var(--color-#{$name}-emphasis-text);
+// Print a quoted string property (like `content` or `font-family`)
+@mixin print-quoted-string-property($property, $value) {
 
-			--color-theme-100: var(--color-#{$name}-100);
-			--color-theme-200: var(--color-#{$name}-200);
-			--color-theme-300: var(--color-#{$name}-300);
-			--color-theme-400: var(--color-#{$name}-400);
-			--color-theme-500: var(--color-#{$name}-500);
-			--color-theme-600: var(--color-#{$name}-600);
-			--color-theme-700: var(--color-#{$name}-700);
-			--color-theme-800: var(--color-#{$name}-800);
-			--color-theme-900: var(--color-#{$name}-900);
-
-			// Set the emphasis alpha values
-			--color-theme-emphasis-alpha-10: var(--color-#{$name}-emphasis-alpha-10);
-			--color-theme-emphasis-alpha-20: var(--color-#{$name}-emphasis-alpha-20);
-			--color-theme-emphasis-alpha-30: var(--color-#{$name}-emphasis-alpha-30);
-			--color-theme-emphasis-alpha-40: var(--color-#{$name}-emphasis-alpha-40);
-			--color-theme-emphasis-alpha-50: var(--color-#{$name}-emphasis-alpha-50);
-			--color-theme-emphasis-alpha-60: var(--color-#{$name}-emphasis-alpha-60);
-			--color-theme-emphasis-alpha-70: var(--color-#{$name}-emphasis-alpha-70);
-			--color-theme-emphasis-alpha-80: var(--color-#{$name}-emphasis-alpha-80);
-			--color-theme-emphasis-alpha-90: var(--color-#{$name}-emphasis-alpha-90);
-			--color-theme-emphasis-alpha-95: var(--color-#{$name}-emphasis-alpha-95);
-			--color-theme-emphasis-alpha-99: var(--color-#{$name}-emphasis-alpha-99);
-
-			// And the accent alpha values
-			--color-theme-accent-alpha-10: var(--color-#{$name}-accent-alpha-10);
-			--color-theme-accent-alpha-20: var(--color-#{$name}-accent-alpha-20);
-			--color-theme-accent-alpha-30: var(--color-#{$name}-accent-alpha-30);
-			--color-theme-accent-alpha-40: var(--color-#{$name}-accent-alpha-40);
-			--color-theme-accent-alpha-50: var(--color-#{$name}-accent-alpha-50);
-			--color-theme-accent-alpha-60: var(--color-#{$name}-accent-alpha-60);
-			--color-theme-accent-alpha-70: var(--color-#{$name}-accent-alpha-70);
-			--color-theme-accent-alpha-80: var(--color-#{$name}-accent-alpha-80);
-			--color-theme-accent-alpha-90: var(--color-#{$name}-accent-alpha-90);
-			--color-theme-accent-alpha-95: var(--color-#{$name}-accent-alpha-95);
-			--color-theme-accent-alpha-99: var(--color-#{$name}-accent-alpha-99);
+	// If value is a list, quote each entry
+	@if type-of($value) == 'list' {
+		$quoted: null;
+		@each $entry in $value {
+			@if $quoted {
+				$quoted: $quoted, string.quote($entry);
+			} @else {
+				$quoted: string.quote($entry);
+			}
 		}
+		$value: $quoted;
+	} @else {
+		$value: string.quote($value);
+	}
+
+	#{$property}: $value;
+}
+
+// Print rules for all the headers
+@mixin all-headers() {
+
+	$selector: '';
+
+	@for $i from 1 through 6 {
+
+		@if $i > 1 {
+			$selector: $selector + ', ';
+		}
+
+		$selector: $selector + 'h#{$i}, .h#{$i}';
+	}
+
+	#{ $selector } {
+		@content;
+	}
+}
+
+// Styles for horizontal context
+@mixin in-horizontal-context($selector, $is_default: false) {
+
+	$selectors: "";
+
+	@if $is_default {
+		$selectors: $selector + ", ";
+	}
+
+	$selectors: $selectors + $selector + ".horizontal";
+
+	// When inside the `.level` class, it should also be horizontal
+	$selectors: $selectors + ", .level > " + $selector;
+	$selectors: $selectors + ", .level-item > " + $selector;
+
+	#{$selectors} {
+		@content;
+	}
+}
+
+// Styles for vertical context
+@mixin in-vertical-context($selector, $is_default: false) {
+
+	$selectors: "";
+
+	@if $is_default {
+		$selectors: $selector + ", ";
+	}
+
+	$selectors: $selectors + $selector + ".vertical";
+
+	// When inside the `.column` class, it should be horizontal
+	$selectors: $selectors + ", .column > " + $selector;
+
+	#{$selectors} {
+		@content;
 	}
 }

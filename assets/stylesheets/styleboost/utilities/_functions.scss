@@ -20,3 +20,19 @@
 @function get-or-default($map, $key, $default) {
 	@return if(map.has-key($map, $key), map.get($map, $key), $default);
 }
+
+// Get a theme property var
+@function themePropertyVar($variable_type, $variant, $component: false) {
+
+	// Return the var like `--color-theme-light-bg`
+	// if the $variant is `light-bg`
+	// and $variable_type is `color`
+	$result: var(--#{$variable_type}-theme-#{$variant});
+
+	// If there is a component, prefer that!
+	@if $component {
+		$result: var(--#{$component}-#{$variable_type}-#{$variant}, $result);
+	}
+
+	@return $result;
+}

@@ -1,0 +1,148 @@
+@use "styleboost/utilities/functions";
+@use "styleboost/utilities/mixins";
+@use "styleboost/variables";
+@use "sass:string";
+
+@layer defaults {
+
+	$fill: functions.themePropertyVar('color',          'fill',          'menu');
+	$fill-text: functions.themePropertyVar('color',     'fill-text',     'menu');
+	$bg: functions.themePropertyVar('color',            'bg',            'menu');
+	$bg-text: functions.themePropertyVar('color',       'bg-text',       'menu');
+	$bg-rgb: functions.themePropertyVar('color',        'bg-rgb',        'menu');
+	$accent: functions.themePropertyVar('color',        'accent',        'menu');
+	$accent-text: functions.themePropertyVar('color',   'accent-text',   'menu');
+	$emphasis: functions.themePropertyVar('color',      'emphasis',      'menu');
+	$emphasis-text: functions.themePropertyVar('color', 'emphasis-text', 'menu');
+	$emphasis-rgb: functions.themePropertyVar('color',  'emphasis-rgb',  'menu');
+
+	:root {
+		@include mixins.print-quoted-string-property('--menu-arrow-content', variables.$menu-arrow-content);
+		@include mixins.print-quoted-string-property('--menu-arrow-font', variables.$menu-arrow-font);
+	}
+
+	// The menu wrapper
+	.menu {
+
+		// The actual menu list (ul)
+		.menu-list {
+			list-style: none;
+			line-height: 1.25;
+			margin: 0;
+			padding: 0;
+			min-height: 0;
+			overflow: clip;
+		}
+
+		.menu-list-animator {
+			display: grid;
+			grid-template-rows: 1fr;
+			min-height: 0;
+			transition: grid-template-rows var(--duration-animation);
+			overflow: clip;
+
+			.menu-list {
+				transition: margin var(--duration-animation);
+			}
+		}
+
+		// The menu item (li)
+		.menu-item {
+
+			// Sub menus
+			.menu-list {
+				border-left: 1px solid rgba(#{$emphasis-rgb}, 0.4);
+				padding-left: .75em;
+				margin: 0.5rem 1rem;
+				background-color: var(--submenu-color-bg, rgba(#{$bg-rgb}, 0.2));
+			}
+
+			// For when you want to let sub-menus slide in
+			&:has(> .menu-list-animator) {
+				&:has(input[type="radio"]:not(:checked), input[type="checkbox"]:not(:checked)) {
+					.menu-list-animator:not(:focus-within) {
+						grid-template-rows: 0fr;
+					}
+
+					.menu-list:not(:focus-within) {
+						margin: 0;
+					}
+				}
+			}
+
+			// For when you do not want to let sub-menus slide in
+			&:not(:has(> .menu-list-animator)) {
+				&:has(input[type="radio"]:not(:checked), input[type="checkbox"]:not(:checked)) {
+					.menu-list:not(:focus-within) {
+						height: 0;
+						margin: 0;
+					}
+				}
+			}
+		}
+
+		// The menu "link" (display value inside an li)
+		.menu-link {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			padding: .5em .75em;
+			background-color: var(--menu-color-bg-state, var(--menu-color-bg, transparent));
+			color: var(--menu-color-text-state, var(--menu-color-text, inherit));
+			text-decoration: none;
+
+			// Hide the inputs used for CSS-only click menus
+			input[type="radio"],
+			input[type="checkbox"] {
+				display: none;
+			}
+
+			&:hover {
+				--menu-color-bg-state: var(--menu-color-hover-bg, #{$bg});
+				--menu-color-text-state: var(--menu-color-hover-text, #{$bg-text});
+			}
+
+			&:focus {
+				--menu-color-bg-state: var(--menu-color-focus-bg, #{$accent});
+				--menu-color-text-state: var(--menu-color-focus-text, #{$accent-text});
+			}
+
+			&:has(input[type="radio"]:checked),
+			&:has(input[type="checkbox"]:checked),
+			&:has(.is-active),
+			&:has(.active-link),
+			&:active,
+			&.is-active,
+			&.active-link {
+				--menu-color-bg-state: var(--menu-color-active-bg, #{$fill});
+				--menu-color-text-state: var(--menu-color-active-text, #{$fill-text});
+
+				> .menu-arrow {
+					transform: rotate(90deg);
+				}
+			}
+
+			.menu-icon,
+			.menu-bullet {
+				margin-right: .5em;
+				min-width: 2rem;
+			}
+		}
+
+		.menu-arrow {
+			display: flex;
+			align-items: stretch;
+			position: relative;
+			overflow: hidden;
+			flex-shrink: 0;
+			margin-left: 5px;
+			transition: transform;
+			transition-duration: 0.3s;
+
+			&::after {
+				content: var(--menu-arrow-content);
+				font-family: var(--menu-arrow-font);
+			}
+		}
+	}
+}

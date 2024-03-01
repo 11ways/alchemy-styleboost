@@ -93,6 +93,14 @@ $modes: (
 			"suffix": "200",
 			"action": "tint",
 			"args"  : 60%,
+
+			"theme_overrides": (
+				// The "bright" theme should actually turn the accent color into a shade
+				"bright": (
+					"action": "shade",
+					"args"  : 5%,
+				)
+			),
 		),
 		"emphasis": (
 			"suffix": "600",
@@ -123,6 +131,14 @@ $modes: (
 			"suffix": "700",
 			"action": "shade",
 			"args"  : 40%,
+
+			"theme_overrides": (
+				// The "dim" theme should actually turn the accent color into a tint
+				"dim": (
+					"action": "tint",
+					"args"  : 20%,
+				)
+			),
 		),
 		"emphasis": (
 			"suffix": "200",
@@ -130,6 +146,25 @@ $modes: (
 			"args"  : 20%,
 		),
 	),
+) !default;
+
+// The default mode & theme
+$default-mode: "light" !default;
+$default-theme: "bright" !default;
+
+// The default component themes
+$components: (
+	"body": $default-theme,
+) !default;
+
+// The default radius
+$radius: (
+	"none" : 0,
+	"sm"   : 0.2rem,
+	"md"   : 0.4rem,
+	"lg"   : 0.6rem,
+	"xl"   : 0.8rem,
+	"xxl"  : 1.0rem,
 ) !default;
 
 // The contrast ratio to reach against white, to determine if color changes from "light" to "dark". Acceptable values for WCAG 2.0 are 3, 4.5 and 7.
@@ -145,12 +180,31 @@ $contrast-light-default: white !default;
 /// @type string
 $planifolia-colorspace: 'lab' !default;
 
+// Menu variables
+$menu-arrow-content: "\f105" !default;
+$menu-arrow-font: "Font Awesome 6 Pro", "Font Awesome 6 Free" !default;
+
+// Default animation duration
+$animation-duration: 0.3s !default;
+
+// The container horizontal gap, which acts as the offset for breakpoints
+$tablet: 768px !default;
+$small-desktop: 960px !default;
+$medium-desktop: 1152px !default;
+$large-desktop: 1440px !default;
+
+// All our breakpoints
+$breakpoints: (
+	"phone"          : ("until": $tablet),
+	"tablet"         : ("from": $tablet),
+	"any-desktop"    : ("from": $small-desktop),
+	"small-desktop"  : ("from": $small-desktop, "until": $medium-desktop),
+	"medium-desktop" : ("from": $medium-desktop, "until": $large-desktop),
+	"large-desktop"  : ("from": $large-desktop),
+) !default;
+
 // Optional extra modes
 $extra-modes: () !default;
-
-// The default mode & theme
-$default-mode: "light" !default;
-$default-theme: "bright" !default;
 
 // Set the defaults in the boot module
 $temp: boot.setDefaultMode($default-mode);
@@ -164,6 +218,7 @@ $colors: boot.initColors($colors, $extra-colors);
 $shades: boot.initShades($shades, $extra-shades);
 $themes: boot.initThemes($themes, $extra-themes);
 $modes: boot.initModes($modes, $extra-modes);
+$components: boot.initComponents($components);
 
 // Declare all the layers in their order
 @layer #{$layers};
@@ -173,6 +228,10 @@ $modes: boot.initModes($modes, $extra-modes);
 		@include boot.outputRanges();
 		@include boot.outputNumberedColors();
 		@include boot.outputRGBColors();
+
+		@include map-to-properties($radius, '--radius-');
+
+		--duration-animation: #{$animation-duration};
 	}
 }
 

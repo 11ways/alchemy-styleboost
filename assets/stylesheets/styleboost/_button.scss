@@ -1,30 +1,44 @@
-.default-button {
-	font-size: var(--al-button-font-size, 1em);
-	font-weight: var(--al-button-font-weight, 400);
-	background-color: var(--al-button-color-bg, var(--color-theme-fill));
-	color: var(--al-button-color-text, var(--color-theme-fill-text));
-	cursor: pointer;
-	user-select: none;
+@use "styleboost/utilities/functions";
 
-	padding: 0.5em 1em;
-	text-align: center;
-	text-decoration: none;
-	vertical-align: bottom;
-	transition: 0.1s;
-	overflow: hidden;
-	line-height: 1.5;
+@layer defaults {
 
-	al-icon,
-	.icon {
-		line-height: 1 !important;
+	$fill: functions.themePropertyVar('color', 'fill', 'button');
+	$fill-text: functions.themePropertyVar('color', 'fill-text', 'button');
+	$emphasis: functions.themePropertyVar('color', 'emphasis', 'button');
+	$emphasis-text: functions.themePropertyVar('color', 'emphasis-text', 'button');
+
+	.button {
+		--button-color-bg-state: initial;
+		--button-color-text-state: initial;
+
+		display: inline-flex;
+		background-color: var(--button-color-bg-state, var(--button-color-bg, #{$fill}));
+		color: var(--button-color-text-state, var(--button-color-text, #{$fill-text}));
+		font-size: var(--button-font-size, 1em);
+		font-weight: var(--button-font-weight, 400);
+		border-radius: var(--button-radius, var(--radius-sm));
+		border-width: var(--button-border-width, 1px);
+		border-color: var(--button-color-border-state, var(--button-color-border, #{$emphasis}));
+		border-style: solid;
+
+		cursor: pointer;
+		user-select: none;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+
+		padding-bottom: calc(.5em - 1px);
+		padding-left: 1em;
+		padding-right: 1em;
+		padding-top: calc(.5em - 1px);
+
+		text-decoration: none;
+		white-space: nowrap;
+		appearance: none;
+
+		&:hover {
+			--button-color-bg-state: var(--button-color-hover-bg, #{$emphasis});
+			--button-color-text-state: var(--button-color-hover-text, #{$emphasis-text});
+		}
 	}
-
-	&:hover {
-		background-color: var(--al-button-hover-color-bg, var(--color-theme-emphasis));
-		color: var(--al-button-hover-color-text, var(--color-theme-emphasis-text));
-	}
-}
-
-.button {
-	@extend .default-button;
 }

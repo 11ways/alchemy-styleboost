@@ -1,0 +1,73 @@
+@use "styleboost/utilities/functions";
+@use "content_columns";
+
+@layer defaults {
+
+	$accent: functions.themePropertyVar('color', 'accent', 'card');
+	$bg: functions.themePropertyVar('color', 'bg', 'card');
+	$bg_text: functions.themePropertyVar('color', 'bg-text', 'card');
+	$accent_rgba: functions.themePropertyVar('color', 'accent-rgb', 'card');
+
+	:root {
+		--card-border-width: 1px;
+		--card-border-style: solid;
+		--card-spacer-x: 1rem;
+		--card-spacer-y: 0.5rem;
+		--card-body-spacer-y: 1rem;
+	}
+
+	.card {
+		--card-color-decoration-bg: rgba(#{$accent_rgba}, 0.3);
+		--cp-card-inner-border-width: var(--card-inner-border-width, var(--card-border-width));
+		--cp-card-color-border: var(--card-color-border, #{$accent});
+		--cp-card-color-bg: var(--card-color-bg, #{$bg});
+
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		word-wrap: break-word;
+
+		color: var(--card-color-text, #{$bg_text});
+		background-color: var(--cp-card-color-bg);
+		border-color: var(--cp-card-color-border);
+		border-radius: var(--card-radius, var(--radius-sm));
+		border-width: var(--card-border-width);
+		border-style: var(--card-border-style);
+
+		&-footer,
+		&-header {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+
+			> * {
+				margin-top: 0;
+				margin-bottom: 0;
+				align-self: center;
+			}
+		}
+
+		&-header {
+			margin-bottom: 0;
+			border-bottom: var(--cp-card-inner-border-width) var(--card-border-style) var(--card-color-border, functions.themePropertyVar('color', 'accent', 'card'));
+			padding: var(--card-header-spacer-y, var(--card-spacer-y)) var(--card-header-spacer-x, var(--card-spacer-x));
+			background-color: var(--card-color-header-bg, var(--card-color-decoration-bg));
+		}
+
+		&-footer {
+			margin-top: 0;
+			border-top: var(--cp-card-inner-border-width) var(--card-border-style) var(--card-color-border, var(--card-color-accent, var(--color-theme-accent)));
+			padding: var(--card-footer-spacer-y, var(--card-spacer-y)) var(--card-footer-spacer-x, var(--card-spacer-x));
+			background-color: var(--card-color-footer-bg, var(--card-color-decoration-bg));
+		}
+
+		&-body {
+			flex: 1 1 auto;
+			padding: var(--card-body-spacer-y) 0;
+
+			@extend .content-columns;
+			--content-column-name: feature;
+			--content-column-padding: var(--card-spacer-x);
+		}
+	}
+}

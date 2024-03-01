@@ -1,0 +1,90 @@
+@use "styleboost/variables";
+@use "sass:map";
+
+// Target a breakpoint with the given property
+@mixin _target($breakpoint, $property: "min-width") {
+
+	// Get the type of the argument.
+	// It may be a string (named breakpoint)
+	$type: type-of($breakpoint);
+
+	// Default from value
+	$from: null;
+	$until: null;
+
+	// If it is a string, get the info
+	@if $type == string {
+		$breakpoint: map.get(variables.$breakpoints, $breakpoint);
+
+		@if $breakpoint {
+			$from: map.get($breakpoint, 'from');
+
+			// If there is no `from` value, use 0
+			@if not $from {
+				$from: 0;
+			}
+		} @else {
+			@warn "No breakpoint found for `#{$breakpoint}`";
+			$from: 0;
+		}
+	}
+
+	@media (#{$property}: $breakpoint) {
+		@content;
+	}
+}
+
+// Target anything higher than the given breakpoint
+@mixin from($breakpoint) {
+	@include _target($breakpoint, "min-width") {
+		@content;
+	}
+}
+
+// Target anything lower than the given breakpoint
+@mixin until($breakpoint) {
+	@include _target($breakpoint, "max-width") {
+		@content;
+	}
+}
+
+// Target the specific breakpoint
+@mixin at($breakpoint) {
+
+	// Get the type of the argument.
+	// It may be a string (named breakpoint)
+	$type: type-of($breakpoint);
+
+	// Default from value
+	$from: null;
+	$until: null;
+
+	// If it is a string, get the info
+	@if $type == string {
+		$breakpoint: map.get(variables.$breakpoints, $breakpoint);
+
+		@if $breakpoint {
+			$from: map.get($breakpoint, 'from');
+
+			// If there is no `from` value, use 0
+			@if not $from {
+				$from: 0;
+			}
+
+			$until: map.get($breakpoint, 'until');
+		} @else {
+			@warn "No breakpoint found for `#{$breakpoint}`";
+			$from: 0;
+		}
+	}
+
+	@if $until {
+		@media (min-width: $from) and (max-width: $until) {
+			@content;
+		}
+	} @else {
+		@media (min-width: $from) {
+			@content;
+		}
+	}
+}

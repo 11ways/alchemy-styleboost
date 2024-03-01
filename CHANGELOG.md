@@ -1,3 +1,7 @@
+## 0.5.0-alpha.2 (WIP)
+
+* Add a lot of new styleboost components
+
 ## 0.5.0-alpha.1 (2024-02-25)
 
 * Upgrade to Alchemy v1.4.0

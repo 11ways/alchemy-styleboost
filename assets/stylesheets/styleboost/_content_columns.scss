@@ -1,0 +1,76 @@
+@layer defaults {
+
+	:root {
+		// The default assigned column
+		--content-column-name: content;
+	}
+
+	.content-columns {
+
+		// The maximum width the entire element is allowed to be
+		--content-column-max-base-width: 100%;
+
+		// The maximum width of the popout column
+		--content-column-popout-max-width: 1200px;
+
+		// The maximum width of the content column
+		--content-column-content-max-width: 900px;
+
+		// The extra width of the popout column
+		--content-column-popout-size: 1rem;
+
+		// The extra width of the feature column
+		--content-column-feature-size: 2rem;
+
+		// Extra padding on the sides
+		--content-column-padding: 1rem;
+
+		--cc-full: var(--content-column-padding);
+		--cc-feature: var(--content-column-feature-size);
+		--cc-popout: var(--content-column-popout-size);
+		--cc-content: min(var(--content-column-max-base-width) - ((var(--cc-full) + var(--cc-feature) + var(--cc-popout))*2), var(--content-column-popout-max-width));
+
+		// The margin column is the remaining space
+		--cc-margin: 1fr;
+
+		display: grid;
+		grid-template-columns:
+			[margin-start]  var(--cc-margin)
+			[full-start]    var(--cc-full)
+			[feature-start] var(--cc-feature)
+			[popout-start]  var(--cc-popout)
+			[content-start]
+				var(--cc-content)
+			[content-end]
+			var(--cc-popout)  [popout-end]
+			var(--cc-feature) [feature-end]
+			var(--cc-full)    [full-end]
+			var(--cc-margin)  [margin-end];
+
+		// All direct descendants are added to the "content" column by default
+		& > * {
+			grid-column: var(--content-column-name, content);
+		}
+	}
+
+	.content-column {
+		--content-column-name: content;
+	}
+
+	.popout-column {
+		--content-column-name: popout;
+	}
+
+	.feature-column {
+		--content-column-name: feature;
+	}
+
+	.full-column {
+		--content-column-name: full;
+	}
+}
+
+.content-columns {
+	// Gaps break everything, so we need to reset them
+	gap: 0 !important;
+}

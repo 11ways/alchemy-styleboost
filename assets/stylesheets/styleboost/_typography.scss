@@ -1,0 +1,16 @@
+@layer utilities {
+
+	$alignments: (
+		"left"      : "left",
+		"centered"  : "center",
+		"right"     : "right",
+		"justified" : "justify",
+	);
+
+	// Iterate over the alignments and generate CSS classes
+	@each $name, $alignment in $alignments {
+		.has-text-#{$name} {
+			text-align: #{$alignment} !important;
+		}
+	}
+}

@@ -5,6 +5,7 @@
 @use "sass:map";
 @use "sass:list";
 @use "sass:meta";
+@use "sass:string";
 @use "contrast";
 @use "functions" as *;
 @use "mixins" as *;
@@ -26,6 +27,9 @@ $all_mode_types: ();
 $color_ranges: ();
 $shade_ranges: ();
 $all_ranges: ();
+
+// The components
+$all_components: ();
 
 // The default mode
 $default_mode: null;
@@ -118,6 +122,72 @@ $min_contrast_ratio: 4.5;
 	@return $result;
 }
 
+// Create a component definition object
+@function createComponentDefinition($component_name, $value) {
+
+	$result: null;
+	$input_type: type-of($value);
+
+	@if $input_type == map {
+		$result: $value;
+	} @else {
+		$result: ("base": $value);
+	}
+
+	$base: map.get($result, "base");
+
+	// If the base is not a string, throw a warning
+	@if type-of($base) != string {
+		@warn "The base theme for the component #{$component_name} is not a valid theme name.";
+	} @else {
+		// Make sure it exists
+		$theme: map.get($all_themes, $base);
+
+		// If the theme does not exist, throw a warning
+		@if not $theme {
+			@warn "The theme #{$base} does not exist, unable to set it for the component #{$component_name}.";
+			@return null;
+		}
+	}
+
+	// Set the name of the component in the definition too
+	$result: map.set($result, "name", $component_name);
+
+	// Get the existing mode values
+	$mode_values: map.get($result, "modes");
+
+	// If the mode values are not a map, create an empty map
+	@if type-of($mode_values) != map {
+		$mode_values: ();
+	}
+
+	// Iterate over all the existing modes
+	@each $mode_name, $mode in $all_modes {
+
+		// See if the mode already exists in the component definition
+		$mode_theme: map.get($mode_values, $mode_name);
+
+		// If the mode theme is not a string, use the base theme
+		@if type-of($mode_theme) != string {
+			$mode_theme: $base;
+			$mode_values: map.set($mode_values, $mode_name, $mode_theme);
+
+			// See if this theme exists
+			$theme: map.get($all_themes, $mode_theme);
+
+			// If the theme does not exist, throw a warning
+			@if not $theme {
+				@warn "The theme #{$mode_theme} does not exist, unable to set it for the component #{$component_name} in the mode #{$mode_name}.";
+			}
+		}
+	}
+
+	// Set the mode values
+	$result: map.set($result, "modes", $mode_values);
+
+	@return $result;
+}
+
 // Generate the mode themes
 @function generateModeThemes($mode_name, $mode) {
 
@@ -167,7 +237,7 @@ $min_contrast_ratio: 4.5;
 		} @else if $type == "name" {
 			// Do nothing
 		} @else if $type == "base" {
-			$mode_base_value: applyModeTransformation($mode, $type, $mode_values, $mode_base_value);
+			$mode_base_value: applyModeTransformation($theme, $mode, $type, $mode_values, $mode_base_value);
 		} @else if $type == "text" {
 			$text_instruction: $value;
 		} @else {
@@ -191,12 +261,16 @@ $min_contrast_ratio: 4.5;
 	@each $type, $value in $mode_types {
 
 		// Apply the mode type transformation
-		$calculated: applyModeTransformation($mode, $type, $mode_values, $mode_base_value);
+		$calculated: applyModeTransformation($theme, $mode, $type, $mode_values, $mode_base_value);
 		$mode_values: map.set($mode_values, $type, $calculated);
 
-		@if $text_instruction {
-			$text_value: applyModeTransformation($mode, "text", $mode_values, $calculated, $text_instruction);
-			$mode_values: map.set($mode_values, #{$type} + "-text", $text_value);
+		$text_type: #{$type} + "-text";
+
+		@if map.has-key($mode_values, $text_type) {
+			// Nothing
+		} @else if $text_instruction {
+			$text_value: applyModeTransformation($theme, $mode, "text", $mode_values, $calculated, $text_instruction);
+			$mode_values: map.set($mode_values, $text_type, $text_value);
 		}
 	}
 
@@ -208,7 +282,7 @@ $min_contrast_ratio: 4.5;
 }
 
 // Perform all the mode actions
-@function applyModeTransformation($mode, $type, $values, $base_value, $type_info: null) {
+@function applyModeTransformation($theme, $mode, $type, $values, $base_value, $type_info: null) {
 
 	// See if the type has already been defined
 	$result: map.get($values, $type);
@@ -223,11 +297,13 @@ $min_contrast_ratio: 4.5;
 		$result: getColorValue($result);
 	}
 
-	// If result is not truthy, use the base value
-	@if not $result {
-		$result: $base_value;
+	// If there is a result, use that
+	@if $result {
+		@return $result;
 	}
 
+	// If result is not truthy, use the base value
+	$result: $base_value;
 	$base_value: $result;
 	$info: null;
 
@@ -236,6 +312,12 @@ $min_contrast_ratio: 4.5;
 	} @else {
 		$info: map.get($mode, $type);
 	}
+
+	// Get the theme name
+	$theme_name: map.get($theme, "name");
+
+	// It's possible that this transformation has theme specific overrides
+	$info: resolveThemeOverrides($theme_name, $info);
 
 	// If there is no info, return the value as is
 	@if not $info {
@@ -303,6 +385,31 @@ $min_contrast_ratio: 4.5;
 		$result: $modified;
 	}
 
+	@return $result;
+}
+
+// Resolve possible overrides
+@function resolveThemeOverrides($theme_name, $base) {
+
+	$overrides: map.get($base, "theme_overrides");
+
+	// If there are no overrides, return the base
+	@if type-of($overrides) != map {
+		@return $base;
+	}
+
+	// Get the wanted override
+	$theme_override: map.get($overrides, $theme_name);
+
+	// If the override is not a map, return the base
+	@if type-of($theme_override) != map {
+		@return $base;
+	}
+
+	// Merge the base with the override
+	$result: map.merge($base, $theme_override);
+
+	// Return the result
 	@return $result;
 }
 
@@ -575,6 +682,24 @@ $min_contrast_ratio: 4.5;
 	@return $result;
 }
 
+// Init the component themes
+@function initComponents($components) {
+
+	// This will be the map that only contains the component themes
+	$result: ();
+
+	@each $component_name, $value in $components {
+		$definition: createComponentDefinition($component_name, $value);
+		$result: map.set($result, $component_name, $definition);
+	}
+
+	// Set the external variable
+	$all_components: $result !global;
+
+	// Return the result
+	@return $result;
+}
+
 // Flatten a map
 @function flattenMap($map, $prefix: "", $delimiter: ".") {
 	$result: ();
@@ -685,55 +810,88 @@ $min_contrast_ratio: 4.5;
 	$counter: 0;
 
 	@each $color_name, $definition in $all_base_colors {
-		$counter: $counter + 1;
 
-		$value: map.get($definition, "value");
-		$tint: map.get($definition, "ranges", "200");
-		$shade: map.get($definition, "ranges", "700");
+		// If the name contains a dash, skip it
+		@if string.index($color_name, "-") == null {
 
-		#{"--color-" + $counter}: #{$value};
-		#{"--color-tint-" + $counter}: #{$tint};
-		#{"--color-shade-" + $counter}: #{$shade};
+			$counter: $counter + 1;
+
+			$value: map.get($definition, "value");
+			$tint: map.get($definition, "ranges", "200");
+			$shade: map.get($definition, "ranges", "700");
+
+			#{"--color-" + $counter}: #{$value};
+			#{"--color-tint-" + $counter}: #{$tint};
+			#{"--color-shade-" + $counter}: #{$shade};
+		}
 	}
 }
 
-// Output the theme colors for the given mode
+// Output the theme colors for the given mode (like "dark", "light", ...)
+// This also outputs the default component settings
 @mixin outputThemeModeColors($mode_name) {
-	
+	$theme_properties: ();
+
+	// First iterate over all the themes and generate
+	// the correct colors for the current mode
 	@each $theme_name, $theme in $all_themes {
 		$mode_values: map.get($theme, "modes");
 		$mode_values: map.get($mode_values, $mode_name);
 		$base_value: map.get($theme, "base_value");
+		$type_properties: ();
 
 		@if type-of($mode_values) != map {
 			$mode_values: ();
 		}
+
+		#{"--color-" + $theme_name}: #{$base_value};
 
 		// If this is the default mode & theme, extend the body
 		@if $mode_name == $default-mode and $theme_name == $default-theme {
 			@at-root {
 				body {
 					@extend .use-#{$theme_name}-theme;
-					@extend .use-#{$mode_name}-mode;
 				}
 			}
 		}
 
-		#{"--color-" + $theme_name}: #{$base_value};
-
+		// Iterate over all the types of the theme in the current mode
 		@each $type, $value in $mode_values {
 
 			// Construct the full name, like "primary-fill" or "warning-bg"
 			$full_name: "#{$theme_name}-#{$type}";
+			$property_name: "--color-" + $full_name;
+			$property_name_rgb: $property_name + "-rgb";
 
 			// Get the actual color value
 			$color: getColorValue($value);
 
+			// Remember the property name for later (for components)
+			$type_properties: map.set($type_properties, $type, $property_name);
+			$type_properties: map.set($type_properties, $type + "-rgb", $property_name_rgb);
+
 			// Output it!
-			#{"--color-" + $full_name}: #{$color};
+			#{$property_name}: #{$color};
 
 			// Also output the RGB variant
-			#{"--color-" + $full_name + "-rgb"}: red($color), green($color), blue($color);
+			#{$property_name_rgb}: red($color), green($color), blue($color);
+		}
+
+		$theme_properties: map.set($theme_properties, $theme_name, $type_properties);
+	}
+
+	// Now output all the component settings for the current mode
+	@each $component_name, $component_definition in $all_components {
+
+		// Get the current mode configuration for this component
+		$theme_for_mode: map.get($component_definition, "modes", $mode_name);
+
+		// Get the theme properties for this component
+		$properties: map.get($theme_properties, $theme_for_mode);
+
+		// Output the component settings
+		@each $type, $property in $properties {
+			#{"--" + $component_name + "-color-" + $type}: var(#{$property});
 		}
 	}
 }
@@ -741,6 +899,16 @@ $min_contrast_ratio: 4.5;
 // Output the mode colors
 @mixin outputModeColors() {
 	@each $mode_name, $mode in $all_modes {
+
+		// If this is the default mode, extend the body
+		@if $mode_name == $default-mode {
+			@at-root {
+				body {
+					@extend .use-#{$mode_name}-mode;
+				}
+			}
+		}
+
 		.use-#{$mode_name}-mode {
 			@include outputThemeModeColors($mode_name);
 		}

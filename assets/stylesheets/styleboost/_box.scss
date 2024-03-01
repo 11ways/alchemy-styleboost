@@ -1,0 +1,33 @@
+@use "styleboost/utilities/functions";
+@use "content_columns";
+
+@layer defaults {
+
+	$accent: functions.themePropertyVar('color', 'accent', 'box');
+	$bg: functions.themePropertyVar('color', 'bg', 'box');
+	$bg_text: functions.themePropertyVar('color', 'bg-text', 'box');
+	$accent_rgba: functions.themePropertyVar('color', 'accent-rgb', 'box');
+
+	:root {
+		--box-border-width: 1px;
+		--box-border-style: solid;
+		--box-spacer-x: 0.5rem;
+		--box-spacer-y: 0.5rem;
+	}
+
+	.box {
+		--box-color-decoration-bg: rgba(#{$accent_rgba}, 0.3);
+		--cp-box-inner-border-width: var(--box-inner-border-width, var(--box-border-width));
+		--cp-box-color-border: var(--box-color-border, #{$accent});
+		--cp-box-color-bg: var(--box-color-bg, #{$bg});
+
+		display: block;
+		color: var(--box-color-text, #{$bg_text});
+		background-color: var(--cp-box-color-bg);
+		border-color: var(--cp-box-color-border);
+		border-radius: var(--box-radius, var(--radius-sm));
+		border-width: var(--box-border-width);
+		border-style: var(--box-border-style);
+		padding: var(--box-spacer-y) var(--box-spacer-x);
+	}
+}

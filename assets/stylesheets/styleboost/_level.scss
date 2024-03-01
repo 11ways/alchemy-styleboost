@@ -1,0 +1,33 @@
+@layer defaults {
+	.level {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		&:has(> .divider) {
+			justify-content: space-evenly;
+		}
+	}
+
+	.level-left {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.level-left,
+	.level-right {
+		flex-basis: auto;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	.level-item {
+		align-items: center;
+		display: flex;
+		flex-basis: auto;
+		flex-grow: 0;
+		flex-shrink: 0;
+		justify-content: center;
+	}
+}
