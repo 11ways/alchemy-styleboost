@@ -135,30 +135,35 @@
 	}
 
 	.theme-fill .theme-rectangle {
-		background-color: var(--color-theme-fill);
-		color: var(--color-theme-fill-text);
+		background-color: var(--color-t-current-fill);
+		color: var(--color-t-current-fill-text);
 	}
 
 	.theme-bg .theme-rectangle {
-		background-color: var(--color-theme-bg);
-		color: var(--color-theme-bg-text);
+		background-color: var(--color-t-current-bg);
+		color: var(--color-t-current-bg-text);
 	}
 
 	.theme-accent .theme-rectangle {
-		//border: 5px solid var(--color-theme-accent);
-		background-color: var(--color-theme-accent);
-		color: var(--color-theme-accent-text);
+		//border: 5px solid var(--color-t-current-accent);
+		background-color: var(--color-t-current-accent);
+		color: var(--color-t-current-accent-text);
 	}
 
 	.theme-accent .theme-rectangle span {
-		background-color: var(--color-theme-accent);
+		background-color: var(--color-t-current-accent);
 		border-radius: 4px;
 		padding: 2px;
 	}
 
 	.theme-emphasis .theme-rectangle {
-		background-color: var(--color-theme-emphasis);
-		color: var(--color-theme-emphasis-text);
+		background-color: var(--color-t-current-emphasis);
+		color: var(--color-t-current-emphasis-text);
+	}
+
+	.theme-subtle .theme-rectangle {
+		background-color: var(--color-t-current-subtle);
+		color: var(--color-t-current-subtle-text);
 	}
 
 	.theme-group {
@@ -210,10 +215,10 @@
 }
 
 header {
-	background-color: var(--color-theme-bg);
-	color: var(--color-theme-bg-text);
+	background-color: var(--color-t-current-bg);
+	color: var(--color-t-current-bg-text);
 	border-radius: 5px;
-	border: 2px solid var(--color-theme-accent);
+	border: 2px solid var(--color-t-current-accent);
 	position: sticky;
 	top: 10px;
 	margin: 2rem;

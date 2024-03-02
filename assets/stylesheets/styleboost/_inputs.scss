@@ -17,7 +17,7 @@
 		--cp-border-color: rgba(#{$accent_rgb}, 0.6);
 		--cp-color-placeholder: #{$bg-text};
 
-		accent-color: var(--color-theme-fill);
+		accent-color: var(--color-t-current-fill);
 		background-color: #{$bg};
 		color: #{$bg-text};
 		border: 1px solid var(--cp-border-color);

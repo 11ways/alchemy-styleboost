@@ -35,6 +35,14 @@
 				</div>
 			</header>
 
+			<div class="content">
+				<h2>Styleboost Colors</h2>
+
+				<p>
+					These are all the colors that are available in the Styleboost framework.
+				</p>
+			</div>
+
 			<pre hidden>
 				{{ JSON.stringify(css_info, null, '\t') }}
 			</pre>
@@ -69,7 +77,7 @@
 					<div class="theme-group use-{% theme_name %}-theme">
 						<span
 							class="theme-name"
-							style="color: var(--color-theme);"
+							style="color: var(--color-t-current);"
 						>{{ theme_name }}</span>
 						<div class="theme-examples">
 
@@ -78,8 +86,8 @@
 									<span>TEXT</span>
 								</div>
 								<div class="theme-extrainfo">
-									<code>--color-{{ theme_name }}-fill</code>
-									<code>--color-{{ theme_name }}-fill-text</code>
+									<code>--color-t-{{ theme_name }}-fill</code>
+									<code>--color-t-{{ theme_name }}-fill-text</code>
 								</div>
 							</div>
 
@@ -88,8 +96,8 @@
 									<span>TEXT</span>
 								</div>
 								<div class="theme-extrainfo">
-									<code>--color-{{ theme_name }}-bg</code>
-									<code>--color-{{ theme_name }}-bg-text</code>
+									<code>--color-t-{{ theme_name }}-bg</code>
+									<code>--color-t-{{ theme_name }}-bg-text</code>
 								</div>
 							</div>
 
@@ -98,8 +106,8 @@
 									<span>TEXT</span>
 								</div>
 								<div class="theme-extrainfo">
-									<code>--color-{{ theme_name }}-accent</code>
-									<code>--color-{{ theme_name }}-accent-text</code>
+									<code>--color-t-{{ theme_name }}-accent</code>
+									<code>--color-t-{{ theme_name }}-accent-text</code>
 								</div>
 							</div>
 
@@ -108,14 +116,78 @@
 									<span>TEXT</span>
 								</div>
 								<div class="theme-extrainfo">
-									<code>--color-{{ theme_name }}-emphasis</code>
-									<code>--color-{{ theme_name }}-emphasis-text</code>
+									<code>--color-t-{{ theme_name }}-emphasis</code>
+									<code>--color-t-{{ theme_name }}-emphasis-text</code>
+								</div>
+							</div>
+
+							<div class="theme-subtle">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-t-{{ theme_name }}-subtle</code>
+									<code>--color-t-{{ theme_name }}-subtle-text</code>
 								</div>
 							</div>
 						</div>
 					</div>
 				{% /each %}
 			{% /macro %}
+
+			<div class="content">
+				<h2>Styleboost Themes</h2>
+
+				<p>
+					Each theme is a collection of (similar) colors used to style components.
+					You have:
+				</p>
+
+				<ul>
+					<li><strong>Fill</strong> - The main color</li>
+					<li><strong>Bg</strong> - The color used for backgrounds</li>
+					<li><strong>Accent</strong> - The color used for accents</li>
+					<li><strong>Emphasis</strong> - The color used for emphasis</li>
+					<li><strong>Subtle</strong> - The color used for subtle elements</li>
+				</ul>
+
+				<p>
+					Each color variant also has an extra `-text` version, which is the color used for text on top of that color.
+				</p>
+
+				<p>
+					This is how the CSS properties look like:
+				</p>
+
+				<ul>
+					<li><code>--color-t-warning-accent</code></li>
+					<li><code>--color-c-card-bg</code></li>
+					<li><code>--color-p-card-bg</code></li>
+				</ul>
+
+				<p>
+					This is what each piece of the property means:
+				</p>
+
+				<table class="table">
+					<tr>
+						<th><code>--color, --size</code></th>
+						<td>The type of the variable. In this case, a color or a size</td>
+					</tr>
+					<tr>
+						<th><code>-t, -c, -p</code></th>
+						<td>The origin of the variable. In this case, a theme color, a component color, or a private (calculated) color</td>
+					</tr>
+					<tr>
+						<th><code>-warning, -card</code></th>
+						<td>The context of the variable. Like the name of the theme or the name of the component</td>
+					</tr>
+					<tr>
+						<th><code>-accent, -bg</code></th>
+						<td>The variant of the variable. In this case, the accent color or the background color</td>
+					</tr>
+				</table>
+			</div>
 
 			<div class="theme-showcase">
 				{% run themeShowcase %}
@@ -156,7 +228,7 @@
 					<div class="table-group use-{% theme_name %}-theme">
 						<span
 							class="theme-name"
-							style="color: var(--color-theme);"
+							style="color: var(--color-t-current);"
 						>{{ theme_name }}</span>
 
 						<table class="table">

@@ -3,7 +3,7 @@
 @layer defaults {
 
 	:root {
-		--table-color: var(--color-theme-bg-text);
+		--table-color: var(--color-t-current-bg-text);
 		--table-cell-padding: 0.5rem;
 		--table-accent-bg: transparent;
 		// --table-bg: #{$table-bg};
@@ -24,9 +24,9 @@
 		--table-color-bg-state: initial;
 
 		width: 100%;
-		color: var(--table-color-text, var(--table-color-bg-text, var(--color-theme-bg-text)));
-		background-color: var(--table-color-bg, var(--table-color-bg, var(--color-theme-bg)));
-		border-color: var(--table-color-border, var(--table-color-accent, var(--color-theme-accent)));
+		color: var(--table-color-text, var(--table-color-bg-text, var(--color-t-current-bg-text)));
+		background-color: var(--table-color-bg, var(--table-color-bg, var(--color-t-current-bg)));
+		border-color: var(--table-color-border, var(--table-color-accent, var(--color-t-current-accent)));
 
 		tbody {
 			vertical-align: inherit;
@@ -40,8 +40,8 @@
 		td {
 			text-align: inherit;
 			padding: var(--table-cell-padding, 0.5rem);
-			color: var(--table-color-text-state, var(--table-color-text-type, var(--table-color-text, var(--table-color-bg-text, var(--color-theme-bg-text)))));
-			border-bottom: 1px solid var(--table-color-border, var(--table-color-accent, var(--color-theme-accent)));
+			color: var(--table-color-text-state, var(--table-color-text-type, var(--table-color-text, var(--table-color-bg-text, var(--color-t-current-bg-text)))));
+			border-bottom: 1px solid var(--table-color-border, var(--table-color-accent, var(--color-t-current-accent)));
 
 			// This does the striping
 			box-shadow: inset 0 0 0 9999px var(--table-color-bg-state, var(--table-color-bg-type, var(--table-accent-bg)));
@@ -49,21 +49,21 @@
 
 		&-striped {
 			tbody > tr:nth-of-type(odd) > * {
-				--table-color-text-type: var(--table-color-striped-text, var(--table-color-accent-text, var(--color-theme-accent-text)));
-				--table-color-bg-type: var(--table-color-striped-bg, rgba( var(--table-color-accent-rgb, var(--color-theme-accent-rgb)), 0.2));
+				--table-color-text-type: var(--table-color-striped-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
+				--table-color-bg-type: var(--table-color-striped-bg, rgba( var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.2));
 			}
 		}
 
 		&-hover {
 			tbody > tr:hover > * {
-				--table-color-text-state: var(--table-color-hover-text, var(--table-color-accent-text, var(--color-theme-accent-text)));
-				--table-color-bg-state: var(--table-color-hover-bg, rgba(var(--table-color-accent-rgb, var(--color-theme-accent-rgb)), 0.4));
+				--table-color-text-state: var(--table-color-hover-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
+				--table-color-bg-state: var(--table-color-hover-bg, rgba(var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.4));
 			}
 		}
 
 		tbody > tr.selected > * {
-			--table-color-text-state: var(--table-color-active-text, var(--table-color-accent-text, var(--color-theme-accent-text)));
-			--table-color-bg-state: var(--table-color-active-bg, rgba(var(--table-color-accent-rgb, var(--color-theme-accent-rgb)), 0.6));
+			--table-color-text-state: var(--table-color-active-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
+			--table-color-bg-state: var(--table-color-active-bg, rgba(var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.6));
 		}
 	}
 }

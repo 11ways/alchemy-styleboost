@@ -107,6 +107,16 @@ $modes: (
 			"action": "shade",
 			"args"  : 20%,
 		),
+		"light": (
+			"suffix": "100",
+			"action": "tint",
+			"args"  : 10%,
+		),
+		"subtle": (
+			"suffix": "200",
+			"action": "tint",
+			"args"  : 10%,
+		),
 	),
 	"dark": (
 		// Special instruction for text colors
@@ -144,6 +154,16 @@ $modes: (
 			"suffix": "200",
 			"action": "tint",
 			"args"  : 20%,
+		),
+		"light": (
+			"suffix": "100",
+			"action": "tint",
+			"args"  : 10%,
+		),
+		"subtle": (
+			"suffix": "800",
+			"action": "tint",
+			"args"  : 10%,
 		),
 	),
 ) !default;

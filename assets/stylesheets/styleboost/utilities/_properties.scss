@@ -1,0 +1,31 @@
+@use "styleboost/utilities/functions";
+
+// Subtle border color for a component
+@function borderColor($component: false) {
+	$result: functions.themePropertyVar('color', 'subtle', $component);
+	@return $result;
+}
+
+@function borderWidth($component: false) {
+	$result: functions.themePropertyVar('width', 'border', $component);
+	@return $result;
+}
+
+// Main background color for a component
+@function backgroundColor($component: false) {
+	$result: functions.themePropertyVar('color', 'bg', $component);
+	@return $result;
+}
+
+// Special background color for a component
+@function decoratedBackgroundColor($component: false) {
+	$rgb: functions.themePropertyVar('color', 'accent-rgb', $component);
+	$result: rgba(#{$rgb}, 0.2);
+	@return $result;
+}
+
+// Main text color for a component
+@function textColor($component: false) {
+	$result: functions.themePropertyVar('color', 'bg-text', $component);
+	@return $result;
+}

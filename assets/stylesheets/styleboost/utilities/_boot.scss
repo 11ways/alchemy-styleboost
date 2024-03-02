@@ -844,7 +844,9 @@ $min_contrast_ratio: 4.5;
 			$mode_values: ();
 		}
 
-		#{"--color-" + $theme_name}: #{$base_value};
+		$theme_infix: "t-" + $theme_name;
+
+		#{"--color-" + $theme_infix}: #{$base_value};
 
 		// If this is the default mode & theme, extend the body
 		@if $mode_name == $default-mode and $theme_name == $default-theme {
@@ -859,7 +861,7 @@ $min_contrast_ratio: 4.5;
 		@each $type, $value in $mode_values {
 
 			// Construct the full name, like "primary-fill" or "warning-bg"
-			$full_name: "#{$theme_name}-#{$type}";
+			$full_name: "#{$theme_infix}-#{$type}";
 			$property_name: "--color-" + $full_name;
 			$property_name_rgb: $property_name + "-rgb";
 
@@ -891,7 +893,8 @@ $min_contrast_ratio: 4.5;
 
 		// Output the component settings
 		@each $type, $property in $properties {
-			#{"--" + $component_name + "-color-" + $type}: var(#{$property});
+			$component_infix: "c-" + $component_name;
+			#{"--color-" + $component_infix + "-" + $type}: var(#{$property});
 		}
 	}
 }
@@ -919,13 +922,13 @@ $min_contrast_ratio: 4.5;
 @mixin outputThemeProperties() {
 	@each $name, $theme in $all_themes {
 		.use-#{$name}-theme {
-			--color-theme: var(--color-#{$name});
+			--color-t-current: var(--color-t-#{$name});
 
 			@each $type, $_ in $all_mode_types {
-				--color-theme-#{$type}: var(--color-#{$name}-#{$type});
-				--color-theme-#{$type}-text: var(--color-#{$name}-#{$type}-text);
+				--color-t-current-#{$type}: var(--color-t-#{$name}-#{$type});
+				--color-t-current-#{$type}-text: var(--color-t-#{$name}-#{$type}-text);
 
-				--color-theme-#{$type}-rgb: var(--color-#{$name}-#{$type}-rgb);
+				--color-t-current-#{$type}-rgb: var(--color-t-#{$name}-#{$type}-rgb);
 			}
 		}
 	}
