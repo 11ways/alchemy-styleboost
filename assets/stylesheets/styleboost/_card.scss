@@ -4,40 +4,50 @@
 
 @layer defaults {
 
-	$accent: functions.themePropertyVar('color', 'accent', 'card');
-	$bg: functions.themePropertyVar('color', 'bg', 'card');
-	$bg_text: functions.themePropertyVar('color', 'bg-text', 'card');
-	$accent_rgba: functions.themePropertyVar('color', 'accent-rgb', 'card');
-	$subtle: functions.themePropertyVar('color', 'subtle', 'card');
-
 	:root {
-		--card-border-width: 1px;
-		--card-border-style: solid;
-		--card-spacer-x: 1rem;
-		--card-spacer-y: 0.5rem;
-		--card-body-spacer-y: 1rem;
+		--size-c-card-border: 1px;
+		--size-c-card-border-inner: 1px;
+		--style-c-card-border: solid;
+		--size-c-card-spacer-x: 1rem;
+		--size-c-card-spacer-y: 0.5rem;
+		--size-c-card-body-spacer-y: 1rem;
 	}
 
 	.card {
-		--cp-card-color-decoration-bg: #{properties.decoratedBackgroundColor('card')};
-		--cp-card-inner-border-width: var(--card-inner-border-width, var(--card-border-width));
-		--cp-card-color-border: #{properties.borderColor('card')};
-		--cp-card-color-bg: #{properties.backgroundColor('card')};
-		--cp-card-color-text: #{properties.textColor('card')};
-		--cp-card-width-border: #{properties.borderWidth('card')};
-		--cp-card-width-border-inner: var(--card-width-border-inner, var(--cp-card-width-border));
+
+		// Define all the private properties
+		--color-p-card-decoration-bg: #{properties.decoratedBackgroundColor('card')};
+		--color-p-card-border: #{properties.borderColor('card')};
+		--color-p-card-bg: #{properties.backgroundColor('card')};
+		--color-p-card-text: #{properties.textColor('card')};
+
+		--size-p-card-border-inner: #{properties.innerBorderWidth('card')};
+		--size-p-card-border: #{properties.borderWidth('card')};
+		--size-p-card-border-radius: #{properties.borderRadius('card')};
+		--style-p-card-border: #{properties.borderStyle('card')};
+
+		--size-p-card-spacer-y: #{properties.miscSize('spacer-y', 'card')};
+		--size-p-card-spacer-x: #{properties.miscSize('spacer-x', 'card')};
+
+		--size-p-card-header-spacer-y: var(--size-c-card-header-spacer-y, var(--size-p-card-spacer-y));
+		--size-p-card-header-spacer-x: var(--size-c-card-header-spacer-x, var(--size-p-card-spacer-x));
+		--size-p-card-header-spacer-y-bottom: var(--size-c-card-header-spacer-y-bottom, var(--size-p-card-header-spacer-y));
+
+		--size-p-card-footer-spacer-y: var(--size-c-card-footer-spacer-y, var(--size-p-card-spacer-y));
+		--size-p-card-footer-spacer-x: var(--size-c-card-footer-spacer-y, var(--size-p-card-spacer-x));
+		--size-p-card-header-spacer-y-top: var(--size-c-card-footer-spacer-y-top, var(--size-p-card-footer-spacer-y));
 
 		display: flex;
 		flex-direction: column;
 		position: relative;
 		word-wrap: break-word;
 
-		color: var(--cp-card-color-text);
-		background-color: var(--cp-card-color-bg);
-		border-color: var(--cp-card-color-border);
-		border-radius: var(--card-radius, var(--radius-sm));
-		border-width: var(--cp-card-width-border);
-		border-style: var(--card-border-style);
+		color: var(--color-p-card-text);
+		background-color: var(--color-p-card-bg);
+		border-color: var(--color-p-card-border);
+		border-radius: var(--size-p-card-border-radius);
+		border-width: var(--size-p-card-border);
+		border-style: var(--style-p-card-border);
 
 		&-footer,
 		&-header {
@@ -54,25 +64,27 @@
 
 		&-header {
 			margin-bottom: 0;
-			border-bottom: var(--cp-card-width-border-inner) var(--card-border-style) var(--cp-card-color-border);
-			padding: var(--card-header-spacer-y, var(--card-spacer-y)) var(--card-header-spacer-x, var(--card-spacer-x));
-			background-color: var(--card-color-header-bg, var(--cp-card-color-decoration-bg));
+			border-bottom: var(--size-p-card-border-inner) var(--style-p-card-border) var(--color-p-card-border);
+			padding: var(--size-p-card-header-spacer-y) var(--size-p-card-header-spacer-x) var(--size-p-card-header-spacer-y-bottom, var(--size-p-card-header-spacer-y));
+			background-color: var(--card-color-header-bg, var(--color-p-card-decoration-bg));
+			border-radius: var(--size-p-card-border-radius) var(--size-p-card-border-radius) 0 0;
 		}
 
 		&-footer {
 			margin-top: 0;
-			border-top: var(--cp-card-width-border-inner) var(--card-border-style) var(--cp-card-color-border);
-			padding: var(--card-footer-spacer-y, var(--card-spacer-y)) var(--card-footer-spacer-x, var(--card-spacer-x));
-			background-color: var(--card-color-footer-bg, var(--cp-card-color-decoration-bg));
+			border-top: var(--size-p-card-border-inner) var(--style-p-card-border) var(--color-p-card-border);
+			padding: var(--size-p-card-footer-spacer-y) var(--size-p-card-footer-spacer-x) var(--size-p-card-footer-spacer-y-bottom, var(--size-p-card-footer-spacer-y));
+			background-color: var(--card-color-footer-bg, var(--color-p-card-decoration-bg));
+			border-radius: 0 0 var(--size-p-card-border-radius) var(--size-p-card-border-radius);
 		}
 
 		&-body {
 			flex: 1 1 auto;
-			padding: var(--card-body-spacer-y) 0;
+			padding: var(--size-p-card-spacer-y) 0;
 
 			@extend .content-columns;
 			--content-column-name: feature;
-			--content-column-padding: var(--card-spacer-x);
+			--content-column-padding: var(--size-p-card-spacer-x);
 		}
 	}
 }

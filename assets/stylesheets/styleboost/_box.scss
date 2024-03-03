@@ -1,4 +1,5 @@
 @use "styleboost/utilities/functions";
+@use "styleboost/utilities/mixins";
 @use "content_columns";
 
 @layer defaults {
@@ -29,5 +30,11 @@
 		border-width: var(--box-border-width);
 		border-style: var(--box-border-style);
 		padding: var(--box-spacer-y) var(--box-spacer-x);
+	}
+
+	@include mixins.in-vertical-context(".box", true) {
+		&:not(:last-child) {
+			margin-bottom: 0.5rem;
+		}
 	}
 }

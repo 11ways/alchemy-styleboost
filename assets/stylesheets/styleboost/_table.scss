@@ -1,69 +1,104 @@
+@use "styleboost/utilities/functions";
+@use "styleboost/utilities/properties";
 @use "variables" as *;
 
 @layer defaults {
 
 	:root {
-		--table-color: var(--color-t-current-bg-text);
-		--table-cell-padding: 0.5rem;
-		--table-accent-bg: transparent;
-		// --table-bg: #{$table-bg};
-		// --table-border-color: #{$table-border-color};
-		// --table-accent-bg: #{$table-accent-bg};
-		// --table-striped-color: #{$table-striped-color};
-		// --table-striped-bg: #{$table-striped-bg};
-		// --table-active-color: #{$table-active-color};
-		// --table-active-bg: #{$table-active-bg};
-		// --table-hover-color: #{$table-hover-color};
-		// --table-hover-bg: #{$table-hover-bg};
+		--size-c-table-cell-padding: 0.5rem;
+
+		// Don't give tables borders by default
+		// (Table borders are weird anyway, it's better to wrap them)
+		--size-c-table-border: 0;
+
+		// Make tables transparent by default
+		--color-c-table-bg: transparent;
 	}
 
 	.table {
-		--table-color-text-type: initial;
-		--table-color-bg-type: initial;
-		--table-color-text-state: initial;
-		--table-color-bg-state: initial;
+		--color-p-table-bg: #{properties.backgroundColor('table')};
+		--color-p-table-bg-text: #{properties.textColor('table')};
+
+		--color-p-table-bg-striped: #{properties.stripedBackgroundColor('table')};
+		--color-p-table-bg-striped-text: #{properties.stripedBackgroundColor('table', 'text')};
+
+		--color-p-table-bg-hover: #{properties.hoverBackgroundColor('table')};
+		--color-p-table-bg-hover-text: #{properties.hoverBackgroundColor('table', 'text')};
+
+		--color-p-table-bg-selected: #{properties.selectedBackgroundColor('table')};
+		--color-p-table-bg-selected-text: #{properties.selectedBackgroundColor('table', 'text')};
+
+		--size-p-table-border-inner: #{properties.innerBorderWidth('table')};
+		--color-p-table-border: #{properties.borderColor('table')};
+		--size-p-table-border: #{properties.borderWidth('table')};
+		--size-p-table-border-radius: #{properties.borderRadius('table')};
+		--style-p-table-border: #{properties.borderStyle('table')};
+		--size-p-table-cell-padding: #{properties.miscSize('cell-padding', 'table')};
+		--color-p-card-border-inner: #{properties.innerBorderColor('table')};
+
+		// State variables
+		--color-s-table-bg: var(--color-p-table-bg);
+		--color-s-table-bg-text: var(--color-p-table-bg-text);
 
 		width: 100%;
-		color: var(--table-color-text, var(--table-color-bg-text, var(--color-t-current-bg-text)));
-		background-color: var(--table-color-bg, var(--table-color-bg, var(--color-t-current-bg)));
-		border-color: var(--table-color-border, var(--table-color-accent, var(--color-t-current-accent)));
-
-		tbody {
-			vertical-align: inherit;
-		}
+		color: var(--color-s-table-bg-text);
+		background-color: var(--color-s-table-bg);
+		border-color: var(--color-p-table-border);
+		border-radius: var(--size-p-table-border-radius);
+		border-width: var(--size-p-table-border);
+		border-style: var(--style-p-table-border);
 
 		thead {
 			vertical-align: bottom;
 		}
 
+		tbody {
+			vertical-align: inherit;
+		}
+
 		th,
 		td {
 			text-align: inherit;
-			padding: var(--table-cell-padding, 0.5rem);
-			color: var(--table-color-text-state, var(--table-color-text-type, var(--table-color-text, var(--table-color-bg-text, var(--color-t-current-bg-text)))));
-			border-bottom: 1px solid var(--table-color-border, var(--table-color-accent, var(--color-t-current-accent)));
+			padding: var(--size-p-table-cell-padding);
 
-			// This does the striping
-			box-shadow: inset 0 0 0 9999px var(--table-color-bg-state, var(--table-color-bg-type, var(--table-accent-bg)));
+			color: var(--color-s-table-text);
+			background-color: var(--color-s-table-bg);
+			border-bottom: var(--size-p-table-border-inner) var(--style-p-table-border) var(--color-p-card-border-inner);
+		}
+
+		&:not(.table-bordered) {
+			--size-c-table-border: 0;
+		}
+
+		&:not(:has(tfoot)) {
+			tbody tr:last-child {
+				th, td {
+					border-bottom: 0;
+				}
+			}
+		}
+
+		&-bordered {
+			--size-c-table-border: 1px;
 		}
 
 		&-striped {
 			tbody > tr:nth-of-type(odd) > * {
-				--table-color-text-type: var(--table-color-striped-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
-				--table-color-bg-type: var(--table-color-striped-bg, rgba( var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.2));
+				--color-s-table-bg: var(--color-p-table-bg-striped);
+				--color-s-table-bg-text: var(--color-p-table-bg-striped-text);
 			}
 		}
 
 		&-hover {
 			tbody > tr:hover > * {
-				--table-color-text-state: var(--table-color-hover-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
-				--table-color-bg-state: var(--table-color-hover-bg, rgba(var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.4));
+				--color-s-table-bg: var(--color-p-table-bg-hover);
+				--color-s-table-bg-text: var(--color-p-table-bg-hover-text);
 			}
 		}
 
 		tbody > tr.selected > * {
-			--table-color-text-state: var(--table-color-active-text, var(--table-color-accent-text, var(--color-t-current-accent-text)));
-			--table-color-bg-state: var(--table-color-active-bg, rgba(var(--table-color-accent-rgb, var(--color-t-current-accent-rgb)), 0.6));
+			--color-s-table-bg: var(--color-p-table-bg-selected);
+			--color-s-table-bg-text: var(--color-p-table-bg-selected-text);
 		}
 	}
 }

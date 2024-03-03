@@ -1,31 +1,193 @@
 @use "styleboost/utilities/functions";
 
-// Subtle border color for a component
-@function borderColor($component: false) {
-	$result: functions.themePropertyVar('color', 'subtle', $component);
+@function _propVar($type, $variant, $component: false, $suffix: false) {
+
+	@if $suffix {
+		$variant: '#{$variant}-#{$suffix}';
+	}
+
+	$result: functions.themePropertyVar($type, $variant, $component);
 	@return $result;
 }
 
-@function borderWidth($component: false) {
-	$result: functions.themePropertyVar('width', 'border', $component);
+// A flashy accent color
+@function flashyAccentColor($component: false, $suffix: false) {
+	$result: _propVar('color', 'accent', $component, $suffix);
+	@return $result;
+}
+
+// A color for placeholder text
+@function placeholderColor($component: false) {
+	$result: _propVar('color', 'bg-text', $component);
+	@return $result;
+}
+
+// Subtle border color for a component
+@function borderColor($component: false) {
+	$result: _propVar('color', 'subtle', $component);
+	@return $result;
+}
+
+// Subtle inner border color for a component
+@function innerBorderColor($component: false) {
+	$result: _propVar('color', 'subtle', $component);
+	@return $result;
+}
+
+// Subtle border color for a component that is being hoverred over
+@function hoverBorderColor($component: false) {
+	$result: _propVar('color', 'subtle-hover', $component);
+	@return $result;
+}
+
+// Explicit border color for a component
+@function flashyBorderColor($component: false) {
+	$result: _propVar('color', 'border-flashy', $component);
 	@return $result;
 }
 
 // Main background color for a component
-@function backgroundColor($component: false) {
-	$result: functions.themePropertyVar('color', 'bg', $component);
+@function backgroundColor($component: false, $suffix: false) {
+	$result: _propVar('color', 'bg', $component, $suffix);
 	@return $result;
 }
 
 // Special background color for a component
-@function decoratedBackgroundColor($component: false) {
-	$rgb: functions.themePropertyVar('color', 'accent-rgb', $component);
-	$result: rgba(#{$rgb}, 0.2);
+@function decoratedBackgroundColor($component: false, $suffix: false) {
+	$result: _propVar('color', 'bg-subtle', $component, $suffix);
+	@return $result;
+}
+
+// Flashy background color for a component
+@function flashyBackgroundColor($component: false, $suffix: false) {
+	$result: _propVar('color', 'core', $component, $suffix);
+	@return $result;
+}
+
+// Flashy background color for a component on a hover
+@function flashyHoverBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'core', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'core', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.8);
+	}
+
+	@return $result;
+}
+
+// Flashy background color for a component on a focus
+@function flashyFocusBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'emphasis', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'emphasis', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.8);
+	}
+	
+	@return $result;
+}
+
+// Flashy background color for a component that is active
+@function flashyActiveBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'emphasis', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'emphasis', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.9);
+	}
+
+	@return $result;
+}
+
+// Background color for a striped table
+@function stripedBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'subtle', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'subtle', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.6);
+	}
+
+	@return $result;
+}
+
+// Background color for a table on hover
+@function hoverBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'subtle', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'subtle', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.4);
+	}
+
+	@return $result;
+}
+
+// Background color for a selected table row
+@function selectedBackgroundColor($component: false, $suffix: false) {
+
+	$result: null;
+
+	@if $suffix {
+		$result: _propVar('color', 'subtle', $component, $suffix);
+	} @else {
+		$rgb: _propVar('color', 'subtle', $component, 'rgb');
+		$result: rgba(#{$rgb}, 0.2);
+	}
+
 	@return $result;
 }
 
 // Main text color for a component
 @function textColor($component: false) {
-	$result: functions.themePropertyVar('color', 'bg-text', $component);
+	$result: _propVar('color', 'bg-text', $component);
+	@return $result;
+}
+
+// Get the main border width
+@function borderWidth($component: false) {
+	$result: _propVar('size', 'border', $component);
+	@return $result;
+}
+
+// Get the inner border width
+@function innerBorderWidth($component: false) {
+	$result: _propVar('size', 'border-inner', $component);
+	@return $result;
+}
+
+// Get the border radius width
+@function borderRadius($component: false) {
+	//border-radius: var(--card-radius, var(--radius-sm));
+	$result: _propVar('size', 'border-radius', $component);
+	@return $result;
+}
+
+// Get the border style
+@function borderStyle($component: false) {
+	//border-radius: var(--card-radius, var(--radius-sm));
+	$result: _propVar('style', 'border', $component);
+	@return $result;
+}
+
+// Get some misc size
+@function miscSize($variant, $component: false) {
+	$result: _propVar('size', $variant, $component);
 	@return $result;
 }

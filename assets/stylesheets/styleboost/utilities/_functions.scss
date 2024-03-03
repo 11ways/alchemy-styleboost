@@ -4,6 +4,7 @@
 @use "sass:map";
 @use "sass:list";
 @use "sass:meta";
+@use "sass:color";
 @use "contrast";
 
 // Tint a color: mix a color with white
@@ -14,6 +15,11 @@
 // Shade a color: mix a color with black
 @function shade-color($color, $weight) {
 	@return mix(black, $color, $weight);
+}
+
+// Create a complement of the given color
+@function complement-color($color, $weight) {
+	@return color.complement($color);
 }
 
 // Get the given key from the map or the default value

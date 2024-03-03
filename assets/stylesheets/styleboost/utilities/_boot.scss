@@ -19,7 +19,7 @@ $all_base_named: ();
 $all_themes: ();
 $all_modes: ();
 
-// All the theme-mode types (like fill, bg, accent, ...)
+// All the theme-mode types (like core, bg, accent, ...)
 // used over all the themes & modes
 $all_mode_types: ();
 
@@ -97,6 +97,17 @@ $min_contrast_ratio: 4.5;
 		$mode_values: ();
 		$result: map.set($result, "modes", $mode_values);
 	}
+
+	// Get the (optional) default property values
+	$default_properties: map.get($result, "default-properties");
+
+	@if type-of($default_properties) != map {
+		$default_properties: ();
+	} @else {
+		$default_properties: parseDefaultProperties($default-properties);
+	}
+
+	$result: map.set($result, "default-properties", $default_properties);
 
 	@return $result;
 }
@@ -226,7 +237,7 @@ $min_contrast_ratio: 4.5;
 
 	// Iterate over all the mode entries.
 	// Most will be type values
-	// Like "fill", "bg", "accent", "emphasis", ...
+	// Like "core", "bg", "accent", "emphasis", ...
 	// But there might also be special instructions like "text" and "base"
 	// And also string-values, those should be skipped too
 	@each $type, $value in $mode {
@@ -257,7 +268,7 @@ $min_contrast_ratio: 4.5;
 	}
 
 	// Iterate over all the mode types
-	// Like "fill", "bg", "accent", "emphasis", ...
+	// Like "core", "bg", "accent", "emphasis", ...
 	@each $type, $value in $mode_types {
 
 		// Apply the mode type transformation
@@ -433,6 +444,10 @@ $min_contrast_ratio: 4.5;
 
 	@if $action == "tint" {
 		@return meta.get-function("tint-color");
+	}
+
+	@if $action == "complement" {
+		@return meta.get-function("complement-color");
 	}
 
 	@return meta.get-function($action);
@@ -700,6 +715,44 @@ $min_contrast_ratio: 4.5;
 	@return $result;
 }
 
+// Parse default property instructions
+@function parseDefaultProperties($properties) {
+	// Prepare the result map
+	$result: ();
+
+	// Iterate over all the properties
+	@each $key, $value in $properties {
+
+		$dash_index: string.index($key, "-");
+
+		// Property names start with their type, followed by a dash.
+		// Extract that type and the rest of the name
+		$type: str-slice($key, 1, $dash_index - 1);
+		$name: str-slice($key, $dash_index + 1);
+
+		$config: (
+			"type"  : $type,
+			"name"  : $name,
+			"value" : $value,
+		);
+
+		// Construct the correct default property name
+		$result: map.set($result, $key, $config);
+	}
+
+	@return $result;
+}
+
+// Init the default properties
+@function initDefaultProperties($properties, $extra_properties) {
+
+	// Merge the properties first
+	$properties: map.merge($properties, $extra_properties);
+	$result: parseDefaultProperties($properties);
+
+	@return $result;
+}
+
 // Flatten a map
 @function flattenMap($map, $prefix: "", $delimiter: ".") {
 	$result: ();
@@ -708,6 +761,7 @@ $min_contrast_ratio: 4.5;
 		$full_key: $prefix + $key;
 
 		@if type-of($value) == map {
+			// Only add it if the map is not empty
 			$result: map.merge($result, flattenMap($value, $full_key + $delimiter, $delimiter));
 		} @else {
 			$result: map.set($result, $full_key, $value);
@@ -827,9 +881,23 @@ $min_contrast_ratio: 4.5;
 	}
 }
 
+// Output the default properties for the given infix
+@mixin outputDefaultProperties($properties, $infix) {
+
+	@each $key, $config in $properties {
+
+		$type: map.get($config, "type");
+		$name: map.get($config, "name");
+		$value: map.get($config, "value");
+
+		$property: "--" + $type + "-" + $infix + "-" + $name;
+		#{$property}: #{$value};
+	}
+}
+
 // Output the theme colors for the given mode (like "dark", "light", ...)
 // This also outputs the default component settings
-@mixin outputThemeModeColors($mode_name) {
+@mixin outputThemeModeColors($mode_name, $allow_extend: false) {
 	$theme_properties: ();
 
 	// First iterate over all the themes and generate
@@ -838,7 +906,7 @@ $min_contrast_ratio: 4.5;
 		$mode_values: map.get($theme, "modes");
 		$mode_values: map.get($mode_values, $mode_name);
 		$base_value: map.get($theme, "base_value");
-		$type_properties: ();
+		$variant_properties: ();
 
 		@if type-of($mode_values) != map {
 			$mode_values: ();
@@ -848,20 +916,11 @@ $min_contrast_ratio: 4.5;
 
 		#{"--color-" + $theme_infix}: #{$base_value};
 
-		// If this is the default mode & theme, extend the body
-		@if $mode_name == $default-mode and $theme_name == $default-theme {
-			@at-root {
-				body {
-					@extend .use-#{$theme_name}-theme;
-				}
-			}
-		}
-
 		// Iterate over all the types of the theme in the current mode
-		@each $type, $value in $mode_values {
+		@each $variant, $value in $mode_values {
 
-			// Construct the full name, like "primary-fill" or "warning-bg"
-			$full_name: "#{$theme_infix}-#{$type}";
+			// Construct the full name, like "primary-core" or "warning-bg"
+			$full_name: "#{$theme_infix}-#{$variant}";
 			$property_name: "--color-" + $full_name;
 			$property_name_rgb: $property_name + "-rgb";
 
@@ -869,8 +928,8 @@ $min_contrast_ratio: 4.5;
 			$color: getColorValue($value);
 
 			// Remember the property name for later (for components)
-			$type_properties: map.set($type_properties, $type, $property_name);
-			$type_properties: map.set($type_properties, $type + "-rgb", $property_name_rgb);
+			$variant_properties: map.set($variant_properties, $variant, $property_name);
+			$variant_properties: map.set($variant_properties, $variant + "-rgb", $property_name_rgb);
 
 			// Output it!
 			#{$property_name}: #{$color};
@@ -879,22 +938,48 @@ $min_contrast_ratio: 4.5;
 			#{$property_name_rgb}: red($color), green($color), blue($color);
 		}
 
-		$theme_properties: map.set($theme_properties, $theme_name, $type_properties);
+		$theme_properties: map.set($theme_properties, $theme_name, $variant_properties);
 	}
 
 	// Now output all the component settings for the current mode
 	@each $component_name, $component_definition in $all_components {
 
-		// Get the current mode configuration for this component
+		// Get the current theme name for this component in this mode
 		$theme_for_mode: map.get($component_definition, "modes", $mode_name);
 
 		// Get the theme properties for this component
 		$properties: map.get($theme_properties, $theme_for_mode);
 
 		// Output the component settings
-		@each $type, $property in $properties {
+		@each $variant, $property in $properties {
 			$component_infix: "c-" + $component_name;
-			#{"--color-" + $component_infix + "-" + $type}: var(#{$property});
+			#{"--color-" + $component_infix + "-" + $variant}: var(#{$property});
+		}
+
+		// Get the theme definition
+		$theme: map.get($all_themes, $theme_for_mode);
+
+		// Get the default properties
+		$default_properties: map.get($theme, "default-properties");
+
+		// Output the default properties
+		@include outputDefaultProperties($default-properties, "c-" + $component_name);
+	}
+
+	@each $theme_name, $theme in $all_themes {
+		@if $theme_name == $default-theme {
+			@include outputThemeClassContents($theme_name);
+		}
+
+		// If this is the default mode & theme, extend the body
+		@if $mode_name == $default-mode and $theme_name == $default-theme {
+			@if $allow_extend {
+				@at-root {
+					body {
+						@extend .use-#{$theme_name}-theme;
+					}
+				}
+			}
 		}
 	}
 }
@@ -912,9 +997,26 @@ $min_contrast_ratio: 4.5;
 			}
 		}
 
-		.use-#{$mode_name}-mode {
-			@include outputThemeModeColors($mode_name);
-		}
+		@include outputModeClass($mode_name, true);
+	}
+}
+
+// Output a specific mode
+@mixin outputModeClass($mode_name, $allow_extend: false) {
+	.use-#{$mode_name}-mode {
+		@include outputModeClassContents($mode_name, $allow_extend);
+	}
+}
+
+// Output a specific mode contents
+@mixin outputModeClassContents($mode_name, $allow_extend: false) {
+	@include outputThemeModeColors($mode_name, $allow_extend);
+
+	// @TODO: determine if it's a dark of light scheme
+	@if $mode_name == "dark" {
+		color-scheme: dark;
+	} @else {
+		color-scheme: light;
 	}
 }
 
@@ -922,16 +1024,27 @@ $min_contrast_ratio: 4.5;
 @mixin outputThemeProperties() {
 	@each $name, $theme in $all_themes {
 		.use-#{$name}-theme {
-			--color-t-current: var(--color-t-#{$name});
-
-			@each $type, $_ in $all_mode_types {
-				--color-t-current-#{$type}: var(--color-t-#{$name}-#{$type});
-				--color-t-current-#{$type}-text: var(--color-t-#{$name}-#{$type}-text);
-
-				--color-t-current-#{$type}-rgb: var(--color-t-#{$name}-#{$type}-rgb);
-			}
+			@include outputThemeClassContents($name);
 		}
 	}
+}
+
+// Output theme contents
+@mixin outputThemeClassContents($name) {
+	$theme: map.get($all_themes, $name);
+
+	--color-t-current: var(--color-t-#{$name});
+
+	@each $type, $_ in $all_mode_types {
+		--color-t-current-#{$type}: var(--color-t-#{$name}-#{$type});
+		--color-t-current-#{$type}-text: var(--color-t-#{$name}-#{$type}-text);
+
+		--color-t-current-#{$type}-rgb: var(--color-t-#{$name}-#{$type}-rgb);
+	}
+
+	// Get the theme's default properties
+	$default_properties: map.get($theme, "default-properties");
+	@include outputDefaultProperties($default-properties, "t-current");
 }
 
 // Output exports

@@ -1,53 +1,89 @@
 @use "styleboost/level";
 @use "styleboost/utilities/functions";
+@use "styleboost/utilities/properties";
 
 @layer defaults {
-	$bg: functions.themePropertyVar('color', 'bg', 'form');
-	$bg-text: functions.themePropertyVar('color', 'bg-text', 'form');
-	//$bg-text-rgb: functions.themePropertyVar('color', 'bg-text-rgb', 'form');
 
-	$accent: functions.themePropertyVar('color', 'accent', 'form');
-	$accent_rgb: functions.themePropertyVar('color', 'accent-rgb', 'form');
-	$emphasis: functions.themePropertyVar('color', 'emphasis', 'form');
-	$emphasis_rgb: functions.themePropertyVar('color', 'emphasis-rgb', 'form');
+	$emphasis_rgb: functions.themePropertyVar('color', 'emphasis-rgb', 'input');
+
+	:root {
+		--size-c-input-border: 1px;
+		--style-c-input-border: solid;
+		--size-c-input-spacer-x: 0.75em;
+		--size-c-input-spacer-y: 0.5em;
+	}
+
+	.input-defaults {
+
+		--color-p-input-accent: #{properties.flashyAccentColor('input')};
+		--color-p-input-accent-text: #{properties.flashyAccentColor('input', 'text')};
+
+		--color-p-input-bg: #{properties.backgroundColor('input')};
+		--color-p-input-text: #{properties.textColor('input')};
+		--color-p-input-placeholder: #{properties.placeholderColor('input')};
+
+		--size-p-input-border-inner: #{properties.innerBorderWidth('input')};
+		--size-p-input-border: #{properties.borderWidth('input')};
+		--size-p-input-border-radius: #{properties.borderRadius('input')};
+		--style-p-input-border: #{properties.borderStyle('input')};
+
+		--size-p-input-spacer-y: #{properties.miscSize('spacer-y', 'input')};
+		--size-p-input-spacer-x: #{properties.miscSize('spacer-x', 'input')};
+
+		--color-p-input-border: #{properties.borderColor('input')};
+		--color-p-input-border-hover: #{properties.hoverBorderColor('input')};
+		--color-p-input-border-focus: #{properties.flashyBorderColor('input')};
+
+		color: var(--color-p-input-text);
+		accent-color: var(--color-p-input-accent);
+		background-color: var(--color-p-input-bg);
+		border-color: var(--color-p-input-border);
+
+		position: relative;
+		appearance: none;
+
+		&:hover {
+			--color-p-input-border: var(--color-p-input-border-hover);
+		}
+
+		&:active,
+		&:focus {
+			--color-p-input-border: var(--color-p-input-border-focus);
+			outline: 0;
+			box-shadow: 0 0 0 .125em rgba(#{$emphasis_rgb}, 0.25);
+		}
+	}
 
 	textarea,
 	select,
-	input {
-		--cp-border-color: rgba(#{$accent_rgb}, 0.6);
-		--cp-color-placeholder: #{$bg-text};
-
-		accent-color: var(--color-t-current-fill);
-		background-color: #{$bg};
-		color: #{$bg-text};
-		border: 1px solid var(--cp-border-color);
-
-		appearance: none;
+	input:not([type="checkbox"]):not([type="radio"]) {
+		@extend .input-defaults;
 		align-items: center;
-		border-radius: .375em;
 		box-shadow: none;
 		display: inline-flex;
 		font-size: 1rem;
 		height: 2.5em;
 		justify-content: flex-start;
 		line-height: 1.5;
-		padding-bottom: calc(.5em - 1px);
-		padding-left: calc(.75em - 1px);
-		padding-right: calc(.75em - 1px);
-		padding-top: calc(.5em - 1px);
-		position: relative;
 		vertical-align: top;
 
-		&:hover {
-			--cp-border-color: rgba(#{$emphasis_rgb}, 0.6);
-		}
+		border-radius: var(--size-p-input-border-radius);
+		border-width: var(--size-p-input-border);
+		border-style: var(--style-p-input-border);
 
-		&:active,
-		&:focus {
-			outline: 0;
-			--cp-border-color: rgba(#{$emphasis_rgb}, 1);
-			box-shadow: 0 0 0 .125em rgba(#{$emphasis_rgb}, 0.25);
-		}
+		padding-bottom: var(--size-p-input-spacer-y);
+		padding-top: var(--size-p-input-spacer-y);
+		padding-left: var(--size-p-input-spacer-x);
+		padding-right: var(--size-p-input-spacer-x);
+	}
+
+	select {
+		// Show an arrow down
+		background-image: var(--image-t-current-chevron);
+		background-repeat: no-repeat;
+		background-position: right 8px center;
+		background-size: 16px 12px;
+		padding-right: calc(var(--size-p-input-spacer-x) + 1.1rem);
 	}
 
 	.control {
@@ -86,17 +122,17 @@
 		}
 	}
 
-	input::placeholder,
+	.input-defaults::placeholder,
 	.control > .prefix,
 	.control > .suffix {
-		color: var(--cp-color-placeholder);
+		color: var(--color-p-input-placeholder);
 		opacity: 0.6;
 	}
 
 	label {
 		display: inline-block;
 
-		&:has(input, textarea, select) {
+		&:has(.input-defaults) {
 			margin-bottom: .5em;
 
 			> * {
@@ -113,5 +149,9 @@
 		top: 0;
 		z-index: 4;
 		pointer-events: none;
+
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
 	}
 }

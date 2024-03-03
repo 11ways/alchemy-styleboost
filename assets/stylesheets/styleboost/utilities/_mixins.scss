@@ -1,11 +1,26 @@
 @use "styleboost/utilities/functions" as *;
 @use "sass:string";
 @use "sass:list";
+@use "sass:map";
 
 // Generate CSS properties
-@mixin map-to-properties($map, $prefix) {
+@mixin map-to-properties($map, $prefix: '') {
+
+	@if not $prefix {
+		$prefix: '';
+	}
+
 	@each $name, $value in $map {
-		#{$prefix + $name}: #{$value};
+		$type: type-of($value);
+
+		// If the value is an empty map, skip it
+		@if $type == 'map' and map.keys($value) == () {
+			// Ignore
+		} @else if $type == 'list' and list.length($value) == 0 {
+			// Do nothing
+		} @else {
+			#{$prefix + $name}: #{$value};
+		}
 	}
 }
 

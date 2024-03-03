@@ -80,16 +80,29 @@ $modes: (
 		),
 
 		// Default types
-		"fill": (
+		"core": (
 			"suffix": "500",
 			"action": false,
+		),
+		"accent": (
+			"action": "complement",
 		),
 		"bg": (
 			"suffix": "100",
 			"action": "tint",
 			"args"  : 80%,
 		),
-		"accent": (
+		"bg-subtle": (
+			"suffix": "200",
+			"action": "tint",
+			"args"  : 10%,
+		),
+		"border-flashy": (
+			"suffix": "600",
+			"action": "shade",
+			"args"  : 20%,
+		),
+		"runner": (
 			"suffix": "200",
 			"action": "tint",
 			"args"  : 60%,
@@ -117,6 +130,11 @@ $modes: (
 			"action": "tint",
 			"args"  : 10%,
 		),
+		"subtle-hover": (
+			"suffix": "400",
+			"action": "tint",
+			"args"  : 20%,
+		),
 	),
 	"dark": (
 		// Special instruction for text colors
@@ -128,16 +146,29 @@ $modes: (
 		),
 
 		// Default types
-		"fill": (
+		"core": (
 			"suffix": "500",
 			"action": false,
+		),
+		"accent": (
+			"action": "complement",
 		),
 		"bg": (
 			"suffix": "900",
 			"action": "shade",
 			"args"  : 80%,
 		),
-		"accent": (
+		"bg-subtle": (
+			"suffix": "800",
+			"action": "tint",
+			"args"  : 10%,
+		),
+		"border-flashy": (
+			"suffix": "400",
+			"action": "tint",
+			"args"  : 20%,
+		),
+		"runner": (
 			"suffix": "700",
 			"action": "shade",
 			"args"  : 40%,
@@ -162,8 +193,13 @@ $modes: (
 		),
 		"subtle": (
 			"suffix": "800",
-			"action": "tint",
-			"args"  : 10%,
+			"action": "shade",
+			"args"  : 60%,
+		),
+		"subtle-hover": (
+			"suffix": "600",
+			"action": "shade",
+			"args"  : 20%,
 		),
 	),
 ) !default;
@@ -207,6 +243,19 @@ $menu-arrow-font: "Font Awesome 6 Pro", "Font Awesome 6 Free" !default;
 // Default animation duration
 $animation-duration: 0.3s !default;
 
+// The default non-color values
+$default-properties: (
+	"size-font"          : 1em,
+	"style-border"       : solid,
+	"size-border"        : 1px,
+	"size-border-inner"  : 1px,
+	"size-border-radius" : 4px,
+	"duration-animation" : $animation-duration,
+) !default;
+
+// Extra default properties
+$extra-default-properties: () !default;
+
 // The container horizontal gap, which acts as the offset for breakpoints
 $tablet: 768px !default;
 $small-desktop: 960px !default;
@@ -238,6 +287,7 @@ $colors: boot.initColors($colors, $extra-colors);
 $shades: boot.initShades($shades, $extra-shades);
 $themes: boot.initThemes($themes, $extra-themes);
 $modes: boot.initModes($modes, $extra-modes);
+$default_property_values: boot.initDefaultProperties($default-properties, $extra-default-properties);
 $components: boot.initComponents($components);
 
 // Declare all the layers in their order
@@ -250,13 +300,17 @@ $components: boot.initComponents($components);
 		@include boot.outputRGBColors();
 
 		@include map-to-properties($radius, '--radius-');
+		@include boot.outputDefaultProperties($default_property_values, 't-current');
 
-		--duration-animation: #{$animation-duration};
+		// @TODO: implement this in the themes
+		--image-t-current-chevron: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f0f2f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 	}
 }
 
-:export {
-	@include boot.outputExports();
+@if should_add_exports() {
+	:export {
+		@include boot.outputExports();
+	}
 }
 
 @layer themes {

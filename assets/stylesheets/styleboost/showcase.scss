@@ -17,7 +17,12 @@
 	// The values should be strings that match the color names.
 	// Do not use color names as theme names.
 	$extra-themes: (
-		"passion": "red",
+		"passion": (
+			"base": "red",
+			"default-properties": (
+				"size-border-inner": 0,
+			),
+		),
 		"app": (
 			"base": "main-color",
 
@@ -45,7 +50,7 @@
 				"suffix": "300",
 				"action": false,
 			),
-			"fill": (
+			"core": (
 				"action": false,
 			),
 			"bg": (
@@ -66,6 +71,8 @@
 	// Specific themes to use per mode & component
 	$components: (
 		// Enable this to make the "passion" theme the default for the "card" component
+		// It will force cards to use this theme by default,
+		// and prefer the default properties of this theme too.
 		//"card": "passion",
 		"body": "app",
 	),
@@ -134,9 +141,9 @@
 		font-weight: bold;
 	}
 
-	.theme-fill .theme-rectangle {
-		background-color: var(--color-t-current-fill);
-		color: var(--color-t-current-fill-text);
+	.theme-core .theme-rectangle {
+		background-color: var(--color-t-current-core);
+		color: var(--color-t-current-core-text);
 	}
 
 	.theme-bg .theme-rectangle {
@@ -145,13 +152,17 @@
 	}
 
 	.theme-accent .theme-rectangle {
-		//border: 5px solid var(--color-t-current-accent);
 		background-color: var(--color-t-current-accent);
 		color: var(--color-t-current-accent-text);
 	}
 
-	.theme-accent .theme-rectangle span {
-		background-color: var(--color-t-current-accent);
+	.theme-runner .theme-rectangle {
+		background-color: var(--color-t-current-runner);
+		color: var(--color-t-current-runner-text);
+	}
+
+	.theme-runner .theme-rectangle span {
+		background-color: var(--color-t-current-runner);
 		border-radius: 4px;
 		padding: 2px;
 	}
@@ -218,7 +229,7 @@ header {
 	background-color: var(--color-t-current-bg);
 	color: var(--color-t-current-bg-text);
 	border-radius: 5px;
-	border: 2px solid var(--color-t-current-accent);
+	border: 2px solid var(--color-t-current-runner);
 	position: sticky;
 	top: 10px;
 	margin: 2rem;
@@ -243,4 +254,33 @@ header {
 
 main {
 	padding-bottom: 3rem;
+}
+
+$counter: 0;
+
+// Make sure all these colors are not pruned
+@each $color, $value in styleboost.$colors {
+
+	// Iterate for 1 to 9
+	@for $index from 1 through 9 {
+		$counter: $counter + 1;
+		$variant: $index * 100;
+
+		[data-keep="#{$counter}"] {
+			background-color: var(--color-#{$color}-#{$variant});
+		}
+	}
+}
+
+@each $color, $value in styleboost.$shades {
+
+	// Iterate for 1 to 9
+	@for $index from 1 through 9 {
+		$counter: $counter + 1;
+		$variant: $index * 100;
+
+		[data-keep-shade="#{$counter}"] {
+			background-color: var(--color-#{$color}-#{$variant});
+		}
+	}
 }

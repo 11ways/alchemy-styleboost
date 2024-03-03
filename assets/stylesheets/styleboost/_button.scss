@@ -1,25 +1,60 @@
 @use "styleboost/utilities/functions";
+@use "styleboost/utilities/properties";
 
 @layer defaults {
 
-	$fill: functions.themePropertyVar('color', 'fill', 'button');
-	$fill-text: functions.themePropertyVar('color', 'fill-text', 'button');
+	$core: functions.themePropertyVar('color', 'core', 'button');
+	$core-text: functions.themePropertyVar('color', 'core-text', 'button');
 	$emphasis: functions.themePropertyVar('color', 'emphasis', 'button');
 	$emphasis-text: functions.themePropertyVar('color', 'emphasis-text', 'button');
 
+	:root {
+		--size-c-button-font: 1em;
+		--size-c-button-font-weight: 400;
+		--size-c-button-spacer-x: 1em;
+		--size-c-button-spacer-y: 0.5em;
+	}
+
 	.button {
-		--button-color-bg-state: initial;
-		--button-color-text-state: initial;
+
+		// Define all the private properties
+		--color-p-button-bg: #{properties.flashyBackgroundColor('button')};
+		--color-p-button-bg-text: #{properties.flashyBackgroundColor('button', 'text')};
+
+		--color-p-button-bg-hover: #{properties.flashyHoverBackgroundColor('button')};
+		--color-p-button-bg-hover-text: #{properties.flashyHoverBackgroundColor('button', 'text')};
+
+		--color-p-button-bg-focus: #{properties.flashyFocusBackgroundColor('button')};
+		--color-p-button-bg-focus-text: #{properties.flashyFocusBackgroundColor('button', 'text')};
+
+		--color-p-button-bg-active: #{properties.flashyActiveBackgroundColor('button')};
+		--color-p-button-bg-active-text: #{properties.flashyActiveBackgroundColor('button', 'text')};
+
+		--color-p-button-border: #{properties.flashyBorderColor('button')};
+		--style-p-button-border: #{properties.borderStyle('button')};
+
+		--size-p-button-font: var(--size-c-button-font);
+		--size-p-button-font-weight: var(--size-c-button-font-weight);
+
+		--size-p-button-border: #{properties.borderWidth('button')};
+		--size-p-button-border-radius: #{properties.borderRadius('button')};
+
+		--color-s-button-bg: var(--color-p-button-bg);
+		--color-s-button-bg-text: var(--color-p-button-bg-text);
+
+		--size-p-button-spacer-y: #{properties.miscSize('spacer-y', 'button')};
+		--size-p-button-spacer-x: #{properties.miscSize('spacer-x', 'button')};
 
 		display: inline-flex;
-		background-color: var(--button-color-bg-state, var(--button-color-bg, #{$fill}));
-		color: var(--button-color-text-state, var(--button-color-text, #{$fill-text}));
-		font-size: var(--button-font-size, 1em);
-		font-weight: var(--button-font-weight, 400);
-		border-radius: var(--button-radius, var(--radius-sm));
-		border-width: var(--button-border-width, 1px);
-		border-color: var(--button-color-border-state, var(--button-color-border, #{$emphasis}));
-		border-style: solid;
+		background-color: var(--color-s-button-bg);
+		color: var(--color-s-button-bg-text);
+		font-size: var(--size-p-button-font);
+		font-weight: var(--size-p-button-font-weight);
+
+		border-radius: var(--size-p-button-border-radius);
+		border-width: var(--size-p-button-border);
+		border-color: var(--color-p-button-border);
+		border-style: var(--style-p-button-border);
 
 		cursor: pointer;
 		user-select: none;
@@ -27,18 +62,28 @@
 		align-items: center;
 		text-align: center;
 
-		padding-bottom: calc(.5em - 1px);
-		padding-left: 1em;
-		padding-right: 1em;
-		padding-top: calc(.5em - 1px);
+		padding-bottom: var(--size-p-button-spacer-y);
+		padding-top: var(--size-p-button-spacer-y);
+		padding-left: var(--size-p-button-spacer-x);
+		padding-right: var(--size-p-button-spacer-x);
 
 		text-decoration: none;
 		white-space: nowrap;
 		appearance: none;
 
 		&:hover {
-			--button-color-bg-state: var(--button-color-hover-bg, #{$emphasis});
-			--button-color-text-state: var(--button-color-hover-text, #{$emphasis-text});
+			--color-s-button-bg: var(--color-p-button-bg-hover);
+			--color-s-button-bg-text: var(--color-p-button-bg-hover-text);
+		}
+
+		&:focus {
+			--color-s-button-bg: var(--color-p-button-bg-focus);
+			--color-s-button-bg-text: var(--color-p-button-bg-focus-text);
+		}
+
+		&:active {
+			--color-s-button-bg: var(--color-p-button-bg-active);
+			--color-s-button-bg-text: var(--color-p-button-bg-active-text);
 		}
 	}
 }
