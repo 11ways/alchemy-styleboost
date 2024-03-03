@@ -1,0 +1,48 @@
+@use "styleboost/variables" as variables;
+@use "styleboost/utilities/functions";
+@use "styleboost/utilities/properties";
+
+@layer defaults {
+	:root {
+		--size-c-badge-font: 0.9em;
+		--ident-c-badge-user-select: none;
+		--size-c-badge-gap: 5px;
+		--size-c-badge-padding: 4px 8px;
+		--number-c-badge-font-weight: 400;
+		--number-c-badge-line-height: 1;
+		--size-c-badge-border-radius: 5px;
+		--ident-c-badge-white-space: nowrap;
+	}
+
+	.badge {
+		--color-p-badge-bg: #{properties.flashyBackgroundColor('button')};
+		--color-p-badge-bg-text: #{properties.flashyBackgroundColor('button', 'text')};
+
+		display: inline-flex;
+		text-align: center;
+
+		color: var(--color-p-badge-bg-text);
+		background-color: var(--color-p-badge-bg);
+		font-size: var(--size-c-badge-font);
+		user-select: var(--ident-c-badge-user-select);
+		gap: var(--size-c-badge-gap);
+		padding: var(--size-c-badge-padding);
+		font-weight: var(--number-c-badge-font-weight);
+		line-height: var(--number-c-badge-line-height);
+		border-radius: var(--size-c-badge-border-radius);
+		white-space: var(--ident-c-badge-white-space);
+	}
+
+	$counter: 0;
+
+	// Iterate over all the available colors and create a badge color set for each
+	// We do this without the badge class to lower specificity
+	@each $color, $value in variables.$colors {
+		$counter: $counter + 1;
+
+		[data-badge-color-set="#{$counter}"] {
+			--color-p-badge-bg-text: var(--color-shade-#{$counter});
+			--color-p-badge-bg: var(--color-tint-#{$counter});
+		}
+	}
+}
