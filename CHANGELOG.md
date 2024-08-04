@@ -1,4 +1,4 @@
-## 0.5.0-alpha.2 (WIP)
+## 0.5.0-alpha.2 (2024-08-04)
 
 * Add a lot of new styleboost components
 
