@@ -101,12 +101,12 @@ Styleboost.setAction(async function getCssInfo(conduit) {
 		CACHE.set(file_path, css_info, 60 * 60 * 24 * 1000);
 	}
 
+	let cookie = conduit.param('cookie') || 'preferred_color_mode';
+
 	let result = {
 		css_info,
-		preferred_color_mode: conduit.cookie('preferred_color_mode'),
+		preferred_color_mode: conduit.cookie(cookie),
 	};
-
-	console.log(css_info);
 
 	conduit.end(result);
 });

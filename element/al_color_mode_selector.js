@@ -26,6 +26,15 @@ ColorMode.setTemplateFile('styleboost/color_mode_selector');
 ColorMode.setAttribute('css-file');
 
 /**
+ * In which cookie this should be stored
+ *
+ * @author   Jelle De Loecker <jelle@elevenways.be>
+ * @since    0.5.0
+ * @version  0.5.0
+ */
+ColorMode.setAttribute('cookie');
+
+/**
  * Prepare variables
  *
  * @author   Jelle De Loecker <jelle@elevenways.be>
@@ -44,6 +53,23 @@ ColorMode.setMethod(function prepareRenderVariables() {
 });
 
 /**
+ * Get the preferred cookie name
+ *
+ * @author   Jelle De Loecker <jelle@elevenways.be>
+ * @since    0.5.0
+ * @version  0.5.0
+ */
+ColorMode.setMethod(function getCookieName() {
+	let cookie = this.cookie;
+
+	if (!cookie) {
+		cookie = 'preferred_color_mode';
+	}
+
+	return cookie;
+});
+
+/**
  * Get CSS info
  *
  * @author   Jelle De Loecker <jelle@elevenways.be>
@@ -53,10 +79,12 @@ ColorMode.setMethod(function prepareRenderVariables() {
 ColorMode.setMethod(async function _getCssResource(css_file) {
 
 	let response;
+	let cookie = this.getCookieName();
 
 	try {
 		response = await this.hawkejs_helpers.Alchemy.getResource('AlchemyStyleboost#getCssInfo', {
 			css_file,
+			cookie,
 		});
 	} catch (err) {
 		return {css_info: {err: err}};
@@ -84,8 +112,10 @@ ColorMode.setMethod(function introduced() {
 		return;
 	}
 
+	let cookie = this.getCookieName();
+
 	mode_select.addEventListener('change', e => {
 		let new_value = mode_select.value;
-		hawkejs.scene.cookie('preferred_color_mode', new_value);
+		hawkejs.scene.cookie(cookie, new_value);
 	});
 });
