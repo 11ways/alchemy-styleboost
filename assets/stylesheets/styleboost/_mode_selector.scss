@@ -1,0 +1,34 @@
+@use "styleboost/utilities/boot";
+@use "styleboost/variables";
+
+@media (prefers-color-scheme: dark) {
+	body:has(al-color-mode-selector .select-mode-label option[value="auto"]:checked) {
+		@include boot.outputModeClassContents("dark");
+		color-scheme: dark;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	body:has(al-color-mode-selector .select-mode-label option[value="auto"]:checked) {
+		@include boot.outputModeClassContents("light");
+		color-scheme: light;
+	}
+}
+
+@each $name, $mode in variables.$modes {
+	body:has(al-color-mode-selector .select-mode-label option[value="#{$name}"]:checked) {
+		@extend .use-#{$name}-mode;
+	}
+}
+
+al-color-mode-selector {
+	display: flex;
+	select {
+		margin-left: 0.5rem;
+	}
+
+	label {
+		display: flex;
+		margin: 0;
+	}
+}

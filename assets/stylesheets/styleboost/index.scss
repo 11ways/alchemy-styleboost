@@ -22,5 +22,6 @@
 @forward "typography";
 
 
+@use "mode_selector";
 @use "normalize/normalize";
 @include normalize.normalize();
