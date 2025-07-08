@@ -1,3 +1,7 @@
+## 0.5.0-alpha.3
+
+* Add `al-color-mode-selector` element
+
 ## 0.5.0-alpha.2 (2024-08-04)
 
 * Add a lot of new styleboost components

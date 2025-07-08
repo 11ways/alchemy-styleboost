@@ -1,0 +1,5 @@
+{% include "layouts/chimera_basics" %}
+
+{% block "main" %}
+<% include('styleboost/_showcase') %>
+{% /block %}

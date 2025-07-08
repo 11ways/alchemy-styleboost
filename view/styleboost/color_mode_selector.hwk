@@ -1,0 +1,18 @@
+<label class="select-mode-label level">
+	{% if css_info.err %}
+		<!-- Error: {{ css_info.err }} -->
+	{% else %}
+		<span>{%t "appearance" context="color-mode-selector" %}</span>
+		<select class="color-modes">
+			<option value="auto">Auto</option>
+			{% each css_info.modes as key, info %}
+				<option
+					value={% key %}
+				>
+					{{ info.name }}
+				</option>
+			{% /each %}
+			<% $0.value = preferred_color_mode %>
+		</select>
+	{% /if %}
+</label>

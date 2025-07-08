@@ -1,0 +1,395 @@
+<% style('styleboost/showcase') %>
+
+<main class="content-columns">
+	<header class="full-column">
+		<h1>Get started with Styleboost</h1>
+
+		<p>
+			Discover Styleboost, the custom SCSS framework for Alchemy MVC.
+		</p>
+
+		<div>
+			<label class="select-mode-label">
+				<span>Select color mode:</span>
+				<select class="color-modes">
+					{% each css_info.modes as mode %}
+						<option value="{{ mode.name }}">{{ mode.name }}</option>
+					{% /each %}
+				</select>
+			</label>
+
+			<label class="select-theme-label">
+				<span>Select color theme:</span>
+				<select class="color-themes">
+					{% each css_info.themes as theme %}
+						<option value="{{ theme.name }}">{{ theme.name }}</option>
+					{% /each %}
+				</select>
+			</label>
+		</div>
+	</header>
+
+	<div class="content">
+		<h2>Styleboost Colors</h2>
+
+		<p>
+			These are all the colors that are available in the Styleboost framework.
+		</p>
+	</div>
+
+	<pre hidden>
+		{{ JSON.stringify(css_info, null, '\t') }}
+	</pre>
+	
+	{% macro colorShowcase %}
+		{% each colors as color_name, color_def %}
+			<div class="color-group">
+				{% each color_def.ranges as key, value %}
+					<div class="color-entry">
+						<div class="color-value" style="background-color: var(--color-{% color_name %}-{% key %})"></div>
+						<div class="color-info">
+							<span class="color-name">
+								{{color_name}}-{{ key }}
+							</span>
+							<span class="color-hex">
+								{{ value }}
+							</span>
+						</div>
+					</div>
+				{% /each %}
+			</div>
+		{% /each %}
+	{% /macro %}
+
+	<div class="color-showcase">
+		{% run colorShowcase colors=css_info.colors %}
+		{% run colorShowcase colors=css_info.shades %}
+	</div>
+
+	{% macro themeShowcase %}
+		{% each css_info.themes as theme_name, theme_def %}
+			<div class="theme-group use-{% theme_name %}-theme">
+				<span
+					class="theme-name"
+					style="color: var(--color-t-current);"
+				>{{ theme_name }}</span>
+				<div class="theme-examples">
+
+					<div class="theme-core">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-core</code>
+							<code>--color-t-{{ theme_name }}-core-text</code>
+						</div>
+					</div>
+
+					<div class="theme-bg">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-bg</code>
+							<code>--color-t-{{ theme_name }}-bg-text</code>
+						</div>
+					</div>
+
+					<div class="theme-accent">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-accent</code>
+							<code>--color-t-{{ theme_name }}-accent-text</code>
+						</div>
+					</div>
+
+					<div class="theme-runner">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-runner</code>
+							<code>--color-t-{{ theme_name }}-runner-text</code>
+						</div>
+					</div>
+
+					<div class="theme-emphasis">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-emphasis</code>
+							<code>--color-t-{{ theme_name }}-emphasis-text</code>
+						</div>
+					</div>
+
+					<div class="theme-subtle">
+						<div class="theme-rectangle">
+							<span>TEXT</span>
+						</div>
+						<div class="theme-extrainfo">
+							<code>--color-t-{{ theme_name }}-subtle</code>
+							<code>--color-t-{{ theme_name }}-subtle-text</code>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% /each %}
+	{% /macro %}
+
+	<div class="content">
+		<h2>Styleboost Themes</h2>
+
+		<p>
+			Each theme is a collection of (similar) colors used to style components.
+			You have:
+		</p>
+
+		<ul>
+			<li><strong>core</strong> - The main color</li>
+			<li><strong>Bg</strong> - The color used for backgrounds</li>
+			<li><strong>Accent</strong> - The color used for accents</li>
+			<li><strong>Emphasis</strong> - The color used for emphasis</li>
+			<li><strong>Subtle</strong> - The color used for subtle elements</li>
+		</ul>
+
+		<p>
+			Each color variant also has an extra `-text` version, which is the color used for text on top of that color.
+		</p>
+
+		<p>
+			This is how the CSS properties look like:
+		</p>
+
+		<ul>
+			<li><code>--color-t-warning-accent</code></li>
+			<li><code>--color-c-card-bg</code></li>
+			<li><code>--color-p-card-bg</code></li>
+		</ul>
+
+		<p>
+			This is what each piece of the property means:
+		</p>
+
+		<table class="table">
+			<tr>
+				<th><code>--color, --size</code></th>
+				<td>The type of the variable. In this case, a color or a size</td>
+			</tr>
+			<tr>
+				<th><code>-t, -c, -p</code></th>
+				<td>The origin of the variable. In this case, a theme color, a component color, or a private (calculated) color</td>
+			</tr>
+			<tr>
+				<th><code>-warning, -card</code></th>
+				<td>The context of the variable. Like the name of the theme or the name of the component</td>
+			</tr>
+			<tr>
+				<th><code>-accent, -bg</code></th>
+				<td>The variant of the variable. In this case, the accent color or the background color</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="theme-showcase">
+		{% run themeShowcase %}
+	</div>
+
+	{% macro tableContents %}
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>First</th>
+				<th>Last</th>
+				<th>Handle</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th>1</th>
+				<td>Mark</td>
+				<td>Otto</td>
+				<td>@mdo</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>Jacob</td>
+				<td>Thornton</td>
+				<td>@fat</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td colspan="2">Larry the Bird</td>
+				<td>@twitter</td>
+			</tr>
+		</tbody>
+	{% /macro %}
+
+	{% macro tableShowcase %}
+		{% each css_info.themes as theme_name, theme_def %}
+			<div class="table-group use-{% theme_name %}-theme">
+				<span
+					class="theme-name"
+					style="color: var(--color-t-current);"
+				>{{ theme_name }}</span>
+
+				<table class="table">
+					{% run tableContents %}
+				</table>
+
+				<table class="table table-striped">
+					{% run tableContents %}
+				</table>
+
+				<table class="table table-hover">
+					{% run tableContents %}
+				</table>
+
+				<table class="table table-striped table-hover table-bordered">
+					{% run tableContents %}
+				</table>
+			</div>
+		{% /each %}
+	{% /macro %}
+
+	<div class="table-showcase" hidden>
+		{% run tableShowcase %}
+	</div>
+
+	<div class="table-showcase">
+		<h2>Tables</h2>
+
+		<div class="table-group">
+			<table class="table">
+				{% run tableContents %}
+			</table>
+
+			<table class="table table-striped">
+				{% run tableContents %}
+			</table>
+
+			<table class="table table-hover">
+				{% run tableContents %}
+			</table>
+
+			<table class="table table-striped table-hover table-bordered">
+				{% run tableContents %}
+			</table>
+		</div>
+	</div>
+
+	<div class="card-showcase">
+		<h2>Cards</h2>
+
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-header-title">
+					Card title
+				</h3>
+				<div class="card-header-controls">
+					<button class="button">
+						<al-icon icon-name="recycle"></al-icon>
+					</button>
+				</div>
+			</div>
+			<div class="card-body">
+				<div>
+				Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros.
+				Donec id elit non mi porta gravida at eget metus.
+				Cum sociis natoque penatibus et magnis dis parturient montes,
+				nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
+				</div>
+			</div>
+			<div class="card-footer">
+				<span>This is the footer!</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="menu-showcase">
+		<h2>Menus</h2>
+
+		<div class="example-menu-wrapper">
+			<aside class="menu">
+				<ul class="menu-list">
+					<li class="menu-item">
+						<a class="menu-link" href="#">Home</a>
+					</li>
+					<li class="menu-item">
+						<a class="menu-link" href="#">Documentation</a>
+					</li>
+					<li class="menu-item">
+						<label class="menu-link">
+							<input type="radio" name="example-menu">
+							<span>FAQ (Radio)</span>
+							<span class="menu-arrow"></span>
+						</label>
+						<ul class="menu-list">
+							<li class="menu-item">
+								<a class="menu-link" href="#">General</a>
+							</li>
+							<li class="menu-item">
+								<a class="menu-link" href="#">Security</a>
+							</li>
+						</ul>
+					</li>
+					<li class="menu-item">
+						<label class="menu-link">
+							<input type="radio" name="example-menu">
+							<span>Community (Radio)</span>
+							<span class="menu-arrow"></span>
+						</label>
+						<ul class="menu-list">
+							<li class="menu-item">
+								<a class="menu-link" href="#">Forums</a>
+							</li>
+							<li class="menu-item">
+								<a class="menu-link" href="#">Blog</a>
+							</li>
+						</ul>
+					</li>
+
+					<li class="menu-item">
+						<label class="menu-link">
+							<input type="checkbox">
+							<span>Community (Checkbox)</span>
+							<span class="menu-arrow"></span>
+						</label>
+						<ul class="menu-list">
+							<li class="menu-item">
+								<a class="menu-link" href="#">Forums</a>
+							</li>
+							<li class="menu-item">
+								<a class="menu-link" href="#">Blog</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</aside>
+		</div>
+	</div>
+
+	<div class="form-showcase">
+		<h2>Forms & inputs</h2>
+
+		<div class="example-form-wrapper">
+			<form class="column">
+				<label>
+					<span>Text input</span>
+					<input type="text" placeholder="Text placeholder">
+				</label>
+
+				<label>
+					<span>Text input with icons</span>
+					<div class="control">
+						<input class="input" type="text" placeholder="Text placeholder">
+						<al-icon class="prefix" icon-name="user"></al-icon>
+						<al-icon class="suffix" icon-name="check"></al-icon>
+					</div>
+				</label>
+			</form>
+		</div>
+	</div>
+</main>
