@@ -6,6 +6,7 @@
 @use "sass:list";
 @use "sass:meta";
 @use "sass:string";
+@use "sass:color";
 @use "contrast";
 @use "functions" as *;
 @use "mixins" as *;
@@ -839,6 +840,18 @@ $min_contrast_ratio: 4.5;
 	@return null;
 }
 
+@function rgbRed($color) {
+	@return color.channel($color, "red", $space: rgb);
+}
+
+@function rgbGreen($color) {
+	@return color.channel($color, "green", $space: rgb);
+}
+
+@function rgbBlue($color) {
+	@return color.channel($color, "blue", $space: rgb);
+}
+
 // Output all color ranges
 @mixin outputRanges($prefix: "--color-") {
 	@each $key, $value in $all_ranges {
@@ -850,9 +863,9 @@ $min_contrast_ratio: 4.5;
 @mixin outputRGBColors() {
 	@each $color_name, $definition in $all_base_colors {
 		$value: map.get($definition, "value");
-		$red: red($value);
-		$green: green($value);
-		$blue: blue($value);
+		$red: rgbRed($value);
+		$green: rgbGreen($value);
+		$blue: rgbBlue($value);
 
 		#{"--color-" + $color_name + "-rgb"}: #{$red}, #{$green}, #{$blue};
 	}
@@ -935,7 +948,7 @@ $min_contrast_ratio: 4.5;
 			#{$property_name}: #{$color};
 
 			// Also output the RGB variant
-			#{$property_name_rgb}: red($color), green($color), blue($color);
+			#{$property_name_rgb}: rgbRed($color), rgbGreen($color), rgbBlue($color);
 		}
 
 		$theme_properties: map.set($theme_properties, $theme_name, $variant_properties);

@@ -20,6 +20,7 @@
 
 @use "sass:color";
 @use "sass:math";
+@use "styleboost/utilities/boot";
 
 @function _perc($x) {
 	@return if(unit($x) == '%', math.div($x, 100%), $x);
@@ -57,9 +58,9 @@
 }
 
 @function _to-xyz($color) {
-	$r: _srgb-to-rgb(red($color));
-	$g: _srgb-to-rgb(green($color));
-	$b: _srgb-to-rgb(blue($color));
+	$r: _srgb-to-rgb(boot.rgbRed($color));
+	$g: _srgb-to-rgb(boot.rgbGreen($color));
+	$b: _srgb-to-rgb(boot.rgbBlue($color));
 
 	$x: 0.4124 * $r + 0.3576 * $g + 0.1805 * $b;
 	$y: 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
@@ -81,9 +82,9 @@
 }
 
 @function _to-yuv($color) {
-	$r: _srgb-to-rgb(red($color));
-	$g: _srgb-to-rgb(green($color));
-	$b: _srgb-to-rgb(blue($color));
+	$r: _srgb-to-rgb(boot.rgbRed($color));
+	$g: _srgb-to-rgb(boot.rgbGreen($color));
+	$b: _srgb-to-rgb(boot.rgbBlue($color));
 
 	$y: 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
 	$u: -0.09991 * $r + -0.33609 * $g + 0.436 * $b;
@@ -274,7 +275,7 @@
 		@return _lch-unclipped($lightness, $chroma * $max * 0.01, $hue, 'luv');
 	} @else if $colorspace == 'hsl' {
 		$color: hsl(math.div($hue, 1deg) * 1deg, $chroma * 1%, $lightness * 1%);
-		@return (red($color), green($color), blue($color));
+		@return (boot.rgbRed($color), boot.rgbGreen($color), boot.rgbBlue($color));
 	} @else if $colorspace == 'yuv' {
 		$yuv: _lch-to-lab(($lightness, $chroma, $hue));
 		@return _from-yuv($yuv);

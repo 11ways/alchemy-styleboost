@@ -6,6 +6,20 @@
 ////
 
 @use "sass:math";
+@use "sass:color";
+
+// Duplicated here because of loading reasons
+@function rgbRed($color) {
+	@return color.channel($color, "red", $space: rgb);
+}
+
+@function rgbGreen($color) {
+	@return color.channel($color, "green", $space: rgb);
+}
+
+@function rgbBlue($color) {
+	@return color.channel($color, "blue", $space: rgb);
+}
 
 @function _threshold($threshold) {
 	@if ($threshold == 'AA' or $threshold == 'AAALG') {
@@ -40,17 +54,17 @@
 	}
 
 	$a: $a2 + (1 - $a2) * $a1;
-	$r: math.div($a2 * red($fg) + (1 - $a2) * $a1 * red($bg), $a);
-	$g: math.div($a2 * green($fg) + (1 - $a2) * $a1 * green($bg), $a);
-	$b: math.div($a2 * blue($fg) + (1 - $a2) * $a1 * blue($bg), $a);
+	$r: math.div($a2 * rgbRed($fg) + (1 - $a2) * $a1 * rgbRed($bg), $a);
+	$g: math.div($a2 * rgbGreen($fg) + (1 - $a2) * $a1 * rgbGreen($bg), $a);
+	$b: math.div($a2 * rgbBlue($fg) + (1 - $a2) * $a1 * rgbBlue($bg), $a);
 
 	@return rgba($r, $g, $b, $a);
 }
 
 @function luma($color) {
-	$r: _srgb(red($color));
-	$g: _srgb(green($color));
-	$b: _srgb(blue($color));
+	$r: _srgb(rgbRed($color));
+	$g: _srgb(rgbGreen($color));
+	$b: _srgb(rgbBlue($color));
 	@return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
 }
 
