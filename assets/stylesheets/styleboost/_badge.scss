@@ -12,8 +12,7 @@
 		--size-c-badge-border-radius: 5px;
 		--ident-c-badge-white-space: nowrap;
 
-		// Added 2 extra pixels of top padding for baseline nonsense
-		--size-c-badge-padding: 5px 7px 3px;
+		--size-c-badge-padding: 5px 7px 5px;
 	}
 
 	.badge {
@@ -39,6 +38,10 @@
 		> * {
 			height: 100%;
 			display: block;
+		}
+
+		al-icon {
+			font-size: 1.2em;
 		}
 	}
 
