@@ -75,65 +75,24 @@
 				>{{ theme_name }}</span>
 				<div class="theme-examples">
 
-					<div class="theme-core">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-core</code>
-							<code>--color-t-{{ theme_name }}-core-text</code>
-						</div>
-					</div>
+					{% set all_modes = Object.values(theme_def.modes) %}
+					{% set first_mode = all_modes[0] %}
 
-					<div class="theme-bg">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-bg</code>
-							<code>--color-t-{{ theme_name }}-bg-text</code>
-						</div>
-					</div>
-
-					<div class="theme-accent">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-accent</code>
-							<code>--color-t-{{ theme_name }}-accent-text</code>
-						</div>
-					</div>
-
-					<div class="theme-runner">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-runner</code>
-							<code>--color-t-{{ theme_name }}-runner-text</code>
-						</div>
-					</div>
-
-					<div class="theme-emphasis">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-emphasis</code>
-							<code>--color-t-{{ theme_name }}-emphasis-text</code>
-						</div>
-					</div>
-
-					<div class="theme-subtle">
-						<div class="theme-rectangle">
-							<span>TEXT</span>
-						</div>
-						<div class="theme-extrainfo">
-							<code>--color-t-{{ theme_name }}-subtle</code>
-							<code>--color-t-{{ theme_name }}-subtle-text</code>
-						</div>
-					</div>
+					{% each first_mode as key, val %}
+						{% if key.endsWith('-text') %}
+							
+						{% else %}
+							<div class="theme-{% key %}">
+								<div class="theme-rectangle">
+									<span>TEXT</span>
+								</div>
+								<div class="theme-extrainfo">
+									<code>--color-t-{{ theme_name }}-{{ key }}</code>
+									<code>--color-t-{{ theme_name }}-{{ key }}-text</code>
+								</div>
+							</div>
+						{% /if %}
+					{% /each %}
 				</div>
 			</div>
 		{% /each %}

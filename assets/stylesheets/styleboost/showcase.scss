@@ -79,6 +79,26 @@
 );
 @use "alchemy";
 
+$themes: 
+	core,
+	bg,
+	accent,
+	runner,
+	emphasis,
+	subtle,
+	text-muted,
+	text-hover,
+	bg-subtle,
+	bg-hover,
+	bg-active,
+	surface,
+	surface-hover,
+	border,
+	border-hover,
+	border-focus,
+	border-flashy,
+	divider;
+
 .color-showcase {
 	display: grid;
 	grid-template-columns: repeat(9, 1fr);
@@ -141,40 +161,17 @@
 		font-weight: bold;
 	}
 
-	.theme-core .theme-rectangle {
-		background-color: var(--color-t-current-core);
-		color: var(--color-t-current-core-text);
-	}
-
-	.theme-bg .theme-rectangle {
-		background-color: var(--color-t-current-bg);
-		color: var(--color-t-current-bg-text);
-	}
-
-	.theme-accent .theme-rectangle {
-		background-color: var(--color-t-current-accent);
-		color: var(--color-t-current-accent-text);
-	}
-
-	.theme-runner .theme-rectangle {
-		background-color: var(--color-t-current-runner);
-		color: var(--color-t-current-runner-text);
+	@each $theme in $themes {
+		.theme-#{$theme} .theme-rectangle {
+			background-color: var(--color-t-current-#{$theme});
+			color: var(--color-t-current-#{$theme}-text);
+		}
 	}
 
 	.theme-runner .theme-rectangle span {
 		background-color: var(--color-t-current-runner);
 		border-radius: 4px;
 		padding: 2px;
-	}
-
-	.theme-emphasis .theme-rectangle {
-		background-color: var(--color-t-current-emphasis);
-		color: var(--color-t-current-emphasis-text);
-	}
-
-	.theme-subtle .theme-rectangle {
-		background-color: var(--color-t-current-subtle);
-		color: var(--color-t-current-subtle-text);
 	}
 
 	.theme-group {
