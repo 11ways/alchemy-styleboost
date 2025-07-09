@@ -8,9 +8,11 @@
 		--size-c-card-border: 1px;
 		--size-c-card-border-inner: 1px;
 		--style-c-card-border: solid;
-		--size-c-card-spacer-x: 1rem;
-		--size-c-card-spacer-y: 0.5rem;
-		--size-c-card-body-spacer-y: 1rem;
+		--size-c-card-spacer-x: var(--spacing-6);
+		--size-c-card-spacer-y: var(--spacing-4);
+		--size-c-card-body-spacer-y: var(--spacing-6);
+		--size-c-card-header-spacer-y: var(--spacing-4);
+		--size-c-card-footer-spacer-y: var(--spacing-4);
 	}
 
 	.card {

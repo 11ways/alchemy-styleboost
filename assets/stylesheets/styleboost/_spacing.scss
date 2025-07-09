@@ -1,0 +1,78 @@
+@use "variables" as *;
+
+@layer utilities {
+	// Spacing utilities based on the modern spacing scale
+	// These utilities follow the pattern: property-direction-size
+	
+	// Margin utilities
+	@each $key, $value in $spacing {
+		// All sides
+		.m-#{$key} { margin: #{$value} !important; }
+		
+		// Individual sides
+		.mt-#{$key} { margin-top: #{$value} !important; }
+		.mr-#{$key} { margin-right: #{$value} !important; }
+		.mb-#{$key} { margin-bottom: #{$value} !important; }
+		.ml-#{$key} { margin-left: #{$value} !important; }
+		
+		// Horizontal and vertical
+		.mx-#{$key} { 
+			margin-left: #{$value} !important;
+			margin-right: #{$value} !important;
+		}
+		.my-#{$key} { 
+			margin-top: #{$value} !important;
+			margin-bottom: #{$value} !important;
+		}
+	}
+	
+	// Padding utilities
+	@each $key, $value in $spacing {
+		// All sides
+		.p-#{$key} { padding: #{$value} !important; }
+		
+		// Individual sides
+		.pt-#{$key} { padding-top: #{$value} !important; }
+		.pr-#{$key} { padding-right: #{$value} !important; }
+		.pb-#{$key} { padding-bottom: #{$value} !important; }
+		.pl-#{$key} { padding-left: #{$value} !important; }
+		
+		// Horizontal and vertical
+		.px-#{$key} { 
+			padding-left: #{$value} !important;
+			padding-right: #{$value} !important;
+		}
+		.py-#{$key} { 
+			padding-top: #{$value} !important;
+			padding-bottom: #{$value} !important;
+		}
+	}
+	
+	// Gap utilities (for flexbox and grid)
+	@each $key, $value in $spacing {
+		.gap-#{$key} { gap: #{$value} !important; }
+		.gap-x-#{$key} { column-gap: #{$value} !important; }
+		.gap-y-#{$key} { row-gap: #{$value} !important; }
+	}
+	
+	// Space between utilities (for adjacent elements)
+	@each $key, $value in $spacing {
+		.space-x-#{$key} > * + * {
+			margin-left: #{$value} !important;
+		}
+		.space-y-#{$key} > * + * {
+			margin-top: #{$value} !important;
+		}
+	}
+	
+	// Negative margins for special cases
+	@each $key, $value in $spacing {
+		@if $key != "0" {
+			.-m-#{$key} { margin: -#{$value} !important; }
+			.-mt-#{$key} { margin-top: -#{$value} !important; }
+			.-mr-#{$key} { margin-right: -#{$value} !important; }
+			.-mb-#{$key} { margin-bottom: -#{$value} !important; }
+			.-ml-#{$key} { margin-left: -#{$value} !important; }
+		}
+	}
+}

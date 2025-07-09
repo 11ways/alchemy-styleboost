@@ -3,5 +3,20 @@
 		accent-color: var(--color-c-body-accent);
 		background-color: var(--color-c-body-bg);
 		color: var(--color-c-body-bg-text);
+		
+		// Modern typography defaults
+		font-size: var(--text-base);
+		line-height: var(--leading-relaxed);
+		letter-spacing: var(--tracking-normal);
+		font-weight: var(--font-normal);
+		
+		// Better text rendering
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+		
+		// Improve readability
+		word-wrap: break-word;
+		hyphens: auto;
 	}
 }

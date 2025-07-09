@@ -9,10 +9,12 @@
 	$emphasis-text: functions.themePropertyVar('color', 'emphasis-text', 'button');
 
 	:root {
-		--size-c-button-font: 1em;
-		--size-c-button-font-weight: 400;
-		--size-c-button-spacer-x: 1em;
-		--size-c-button-spacer-y: 0.5em;
+		--size-c-button-font: var(--text-sm);
+		--size-c-button-font-weight: var(--font-medium);
+		--size-c-button-spacer-x: var(--spacing-4);
+		--size-c-button-spacer-y: var(--spacing-3);
+		--size-c-button-height: 2.5rem;
+		--size-c-button-line-height: var(--leading-tight);
 	}
 
 	.button {
@@ -50,6 +52,8 @@
 		color: var(--color-s-button-bg-text);
 		font-size: var(--size-p-button-font);
 		font-weight: var(--size-p-button-font-weight);
+		min-height: var(--size-c-button-height);
+		line-height: var(--size-c-button-line-height);
 
 		border-radius: var(--size-p-button-border-radius);
 		border-width: var(--size-p-button-border);
@@ -70,7 +74,10 @@
 		text-decoration: none;
 		white-space: nowrap;
 		appearance: none;
-
+		
+		// Modern button typography
+		letter-spacing: var(--tracking-wide);
+		
 		&:hover {
 			--color-s-button-bg: var(--color-p-button-bg-hover);
 			--color-s-button-bg-text: var(--color-p-button-bg-hover-text);
