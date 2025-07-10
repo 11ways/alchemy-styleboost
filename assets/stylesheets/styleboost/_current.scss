@@ -1,0 +1,19 @@
+@use "styleboost/utilities/functions";
+@use "styleboost/utilities/properties";
+@use "content_columns";
+
+@layer defaults {
+
+	.current-defaults {
+		background-color: var(--color-t-current-bg);
+		color: var(--color-t-app-bg-text);
+	}
+
+	.current-border {
+		border-color: var(--color-t-current-border);
+		border-radius: var(--size-t-current-border-radius);
+		border-width: var(--size-t-current-border);
+		border-style: var(--style-t-current-border);
+	}
+
+}

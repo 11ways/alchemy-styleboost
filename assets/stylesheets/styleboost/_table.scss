@@ -5,7 +5,8 @@
 @layer defaults {
 
 	:root {
-		--size-c-table-cell-padding: 0.5rem;
+		--size-c-table-cell-padding: var(--spacing-3) var(--spacing-4);
+		--size-c-table-row-height: 3rem;
 
 		// Don't give tables borders by default
 		// (Table borders are weird anyway, it's better to wrap them)
@@ -60,6 +61,8 @@
 		td {
 			text-align: inherit;
 			padding: var(--size-p-table-cell-padding);
+			min-height: var(--size-c-table-row-height);
+			vertical-align: middle;
 
 			color: var(--color-s-table-text);
 			background-color: var(--color-s-table-bg);

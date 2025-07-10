@@ -1,6 +1,12 @@
-## 0.5.0-alpha.3
+## 0.5.0-alpha.3 (2025-07-10)
 
+* Reimplement some removed SCSS color functions
 * Add `al-color-mode-selector` element
+* Add automatic color mode selection based on al-color-mode-selector
+* Let each al-color-mode-selector define their own cookie
+* Make icons in a badge slightly bigger
+* Add typography & spacing to styleboost
+* Render all showcase examples automatically
 
 ## 0.5.0-alpha.2 (2024-08-04)
 

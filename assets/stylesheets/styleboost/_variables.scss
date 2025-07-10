@@ -97,10 +97,41 @@ $modes: (
 			"action": "tint",
 			"args"  : 10%,
 		),
+
+		// Surface colors for elevated elements like cards
+		"surface": (
+			"suffix": "50",
+			"action": "tint",
+			"args"  : 90%,
+		),
+
+		// Border variations
+		"border": (
+			"suffix": "300",
+			"action": "tint",
+			"args"  : 50%,
+		),
+		"border-hover": (
+			"suffix": "400",
+			"action": "tint",
+			"args"  : 30%,
+		),
+		"border-focus": (
+			"suffix": "500",
+			"action": "tint",
+			"args"  : 10%,
+		),
 		"border-flashy": (
 			"suffix": "600",
 			"action": "shade",
 			"args"  : 20%,
+		),
+
+		// Dividers and separators (lighter than borders)
+		"divider": (
+			"suffix": "200",
+			"action": "tint",
+			"args"  : 70%,
 		),
 		"runner": (
 			"suffix": "200",
@@ -115,6 +146,15 @@ $modes: (
 				)
 			),
 		),
+
+		// Shadow color for drop shadows
+		"shadow": (
+			"suffix": "900",
+			"action": "shade",
+			"args"  : 60%,
+		),
+
+		// Emphasis and subtle variations
 		"emphasis": (
 			"suffix": "600",
 			"action": "shade",
@@ -163,10 +203,41 @@ $modes: (
 			"action": "tint",
 			"args"  : 10%,
 		),
+
+		// Surface colors for elevated elements like cards
+		"surface": (
+			"suffix": "950",
+			"action": "shade",
+			"args"  : 90%,
+		),
+
+		// Border variations
+		"border": (
+			"suffix": "700",
+			"action": "shade",
+			"args"  : 50%,
+		),
+		"border-hover": (
+			"suffix": "600",
+			"action": "shade",
+			"args"  : 30%,
+		),
+		"border-focus": (
+			"suffix": "500",
+			"action": "shade",
+			"args"  : 10%,
+		),
 		"border-flashy": (
 			"suffix": "400",
 			"action": "tint",
 			"args"  : 20%,
+		),
+
+		// Dividers and separators (lighter than borders in dark mode)
+		"divider": (
+			"suffix": "800",
+			"action": "shade",
+			"args"  : 70%,
 		),
 		"runner": (
 			"suffix": "700",
@@ -181,6 +252,15 @@ $modes: (
 				)
 			),
 		),
+
+		// Shadow color for drop shadows
+		"shadow": (
+			"suffix": "950",
+			"action": "shade",
+			"args"  : 95%,
+		),
+
+		// Emphasis and subtle variations
 		"emphasis": (
 			"suffix": "200",
 			"action": "tint",

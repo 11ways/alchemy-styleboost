@@ -78,6 +78,9 @@
 		// Modern button typography
 		letter-spacing: var(--tracking-wide);
 		
+		// Smooth transitions for background color
+		transition: background 0.15s ease-in-out;
+
 		&:hover {
 			--color-s-button-bg: var(--color-p-button-bg-hover);
 			--color-s-button-bg-text: var(--color-p-button-bg-hover-text);
@@ -86,6 +89,9 @@
 		&:focus {
 			--color-s-button-bg: var(--color-p-button-bg-focus);
 			--color-s-button-bg-text: var(--color-p-button-bg-focus-text);
+
+			outline: 2px solid var(--color-p-button-bg-focus);
+			outline-offset: 2px;
 		}
 
 		&:active {
